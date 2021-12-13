@@ -43,6 +43,17 @@
 
       <v-spacer />
 
+      <!-- add button -->
+      <v-tooltip bottom>
+        <template v-slot:activator="{ on }">
+          <v-btn icon v-on="on" :to="`/add?path=${encodedPath()}`">
+            <v-icon> mdi-plus </v-icon>
+          </v-btn>
+        </template>
+        <span>New Folder</span>
+      </v-tooltip>
+
+      <!-- settings button -->
       <v-tooltip bottom>
         <template v-slot:activator="{ on }">
           <v-btn icon v-on="on" to="/settings">
@@ -89,6 +100,9 @@ export default {
             this.$store.commit("updateFolderList", { folderNames });
           }
         });
+    },
+    encodedPath() {
+      return encodeURIComponent(this.$route.path);
     },
   },
   created() {
