@@ -11,7 +11,10 @@
       ></v-progress-circular>
     </div>
     <div v-else>
-      <dirent-list :dirents="dirents"></dirent-list>
+      <dirent-list
+        :dirents="dirents"
+        @delete-object="deleteObject"
+      ></dirent-list>
     </div>
   </div>
 </template>
@@ -19,7 +22,7 @@
 <script>
 import DirentList from "./DirentList.vue";
 import BcNav from "./BcNav.vue";
-import { ListObjectsV2Command } from "@aws-sdk/client-s3";
+import { ListObjectsV2Command, DeleteObjectCommand } from "@aws-sdk/client-s3";
 
 export default {
   components: { DirentList, BcNav },
@@ -64,6 +67,23 @@ export default {
           // apply changes
           this.dirents = content;
           this.$store.commit("updateFolder", { path: this.path, content });
+        });
+    },
+    deleteObject(key) {
+      this.loading = true;
+      key = this.path + key;
+      this.$store
+        .dispatch("callAws", {
+          service: "s3",
+          params: new DeleteObjectCommand({
+            Bucket: this.$store.state.bucketName,
+            Key: key,
+          }),
+        })
+        .then((res) => {
+          this.loading = false;
+          console.log(res);
+          this.refresh();
         });
     },
   },

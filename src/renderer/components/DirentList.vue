@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-list nav dense>
+    <v-list nav>
       <template v-if="pathNotEmpty.length">
         <v-list-item
           v-for="path in pathNotEmpty"
@@ -16,6 +16,21 @@
           <v-list-item-content>
             <v-list-item-title>{{ path }}</v-list-item-title>
           </v-list-item-content>
+
+          <v-list-item-action v-if="!path.endsWith('/')">
+            <v-tooltip top>
+              <template v-slot:activator="{ on }">
+                <v-btn
+                  icon
+                  v-on="on"
+                  @click.stop="$emit('delete-object', path)"
+                >
+                  <v-icon>mdi-delete-outline</v-icon>
+                </v-btn>
+              </template>
+              <span>Delete</span>
+            </v-tooltip>
+          </v-list-item-action>
         </v-list-item>
       </template>
       <template v-else>
