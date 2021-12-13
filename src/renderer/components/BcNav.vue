@@ -18,20 +18,18 @@ export default {
         },
       ];
       let to = "/";
-      this.$route.path
-        .slice(1) // remove the first '/'
-        .split("/")
-        .slice(0, -1)
-        .map((path) => {
-          to += path + "/";
-          result.push({
-            disabled: false,
-            link: true,
-            exact: true,
-            text: path,
-            to,
-          });
+      let path = this.$route.path.slice(1); // remove the first '/'
+      if (path.endsWith("/")) path = path.slice(0, -1); // remove the last '/' if its a folder
+      path.split("/").map((path) => {
+        to += path + "/";
+        result.push({
+          disabled: false,
+          link: true,
+          exact: true,
+          text: path,
+          to,
         });
+      });
       return result;
     },
   },
