@@ -2,7 +2,7 @@
   <div>
     <v-list nav dense>
       <v-list-item
-        v-for="(obj, path) in dirents"
+        v-for="path in pathNotEmpty"
         :key="path"
         :to="$route.path + path"
       >
@@ -24,6 +24,15 @@
 export default {
   props: {
     dirents: Object,
+  },
+  computed: {
+    pathNotEmpty() {
+      let result = [];
+      for (let path in this.dirents) {
+        if (path.length) result.push(path);
+      }
+      return result;
+    },
   },
 };
 </script>
