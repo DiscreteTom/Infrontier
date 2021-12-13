@@ -3,7 +3,16 @@
     <bc-nav />
     <v-btn @click="refresh" block>Refresh</v-btn>
 
-    <dirent-list :dirents="dirents"></dirent-list>
+    <div v-if="loading" class="d-flex justify-center">
+      <v-progress-circular
+        indeterminate
+        color="primary"
+        :size="50"
+      ></v-progress-circular>
+    </div>
+    <div v-else>
+      <dirent-list :dirents="dirents"></dirent-list>
+    </div>
   </div>
 </template>
 
@@ -17,11 +26,13 @@ export default {
   data() {
     return {
       path: "", // 'aaa/bbb/'
+      loading: false,
       dirents: {},
     };
   },
   methods: {
     refresh() {
+      this.loading = true;
       this.$store
         .dispatch("callAws", {
           service: "s3",
@@ -32,6 +43,7 @@ export default {
           }),
         })
         .then((res) => {
+          this.loading = false;
           let content = {};
           // sub folders
           if (res.CommonPrefixes) {

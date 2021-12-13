@@ -1,7 +1,16 @@
 <template>
   <div>
     <bc-nav />
-    <div>{{ content }}</div>
+    <div v-if="loading" class="d-flex justify-center">
+      <v-progress-circular
+        indeterminate
+        color="primary"
+        :size="50"
+      ></v-progress-circular>
+    </div>
+    <div v-else>
+      <div>{{ content }}</div>
+    </div>
   </div>
 </template>
 
@@ -22,11 +31,13 @@ export default {
   data() {
     return {
       path: "", // 'aaa/bbb/ccc'
+      loading: false,
       content: "",
     };
   },
   methods: {
     refresh() {
+      this.loading = true;
       this.$store
         .dispatch("callAws", {
           service: "s3",
@@ -36,6 +47,7 @@ export default {
           }),
         })
         .then((res) => {
+          this.loading = false;
           this.content = streamToString(res.Body).then(
             (data) => (this.content = data)
           );
