@@ -45,22 +45,6 @@
 
       <v-tooltip bottom>
         <template v-slot:activator="{ on }">
-          <v-btn icon v-on="on" to="/account">
-            <v-icon> mdi-account-outline </v-icon>
-          </v-btn>
-        </template>
-        <span>Account</span>
-      </v-tooltip>
-      <v-tooltip bottom>
-        <template v-slot:activator="{ on }">
-          <v-btn icon v-on="on" to="/add">
-            <v-icon> mdi-plus </v-icon>
-          </v-btn>
-        </template>
-        <span>Add</span>
-      </v-tooltip>
-      <v-tooltip bottom>
-        <template v-slot:activator="{ on }">
           <v-btn icon v-on="on" to="/settings">
             <v-icon> mdi-cog-outline </v-icon>
           </v-btn>
