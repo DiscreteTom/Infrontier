@@ -5,7 +5,9 @@
     </v-alert>
     <h2>Create a new folder:</h2>
     <v-text-field label="Folder Path" v-model="key"></v-text-field>
-    <v-btn @click="submit" :disabled="!this.key.length">Submit</v-btn>
+    <v-btn @click="submit" :disabled="btnDisabled" :loading="btnLoading">
+      Submit
+    </v-btn>
   </div>
 </template>
 
@@ -19,10 +21,12 @@ export default {
       alert: false,
       alertText: "",
       alertType: "success",
+      btnLoading: false,
     };
   },
   methods: {
     submit() {
+      this.btnLoading = true;
       if (!this.key.endsWith("/")) this.key += "/";
 
       this.$store
@@ -38,13 +42,20 @@ export default {
           this.alertText = "Created";
           this.alertType = "success";
           this.alert = true;
+          this.btnLoading = false;
         })
         .catch((err) => {
           console.log(err);
           this.alertText = `Error: ${err}`;
           this.alertType = "error";
           this.alert = true;
+          this.btnLoading = false;
         });
+    },
+  },
+  computed: {
+    btnDisabled() {
+      return this.key.length == 0 || this.btnLoading;
     },
   },
   mounted() {
