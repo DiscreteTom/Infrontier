@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-list nav>
+    <v-list nav dense>
       <template v-if="pathNotEmpty.length">
         <v-list-item
           v-for="path in pathNotEmpty"
@@ -17,7 +17,7 @@
             <v-list-item-title>{{ path }}</v-list-item-title>
           </v-list-item-content>
 
-          <v-list-item-action v-if="!path.endsWith('/')">
+          <v-list-item-action v-if="!path.endsWith('/')" class="my-0">
             <v-tooltip top>
               <template v-slot:activator="{ on }">
                 <v-btn
