@@ -18,7 +18,12 @@
           </v-list-item-content>
 
           <v-list-item-action v-if="!path.endsWith('/')" class="my-0 mx-1">
-            <tt-btn top icon="mdi-cloud-download-outline" tt="Download" />
+            <tt-btn
+              top
+              icon="mdi-cloud-download-outline"
+              tt="Download"
+              @click="saveObject(path)"
+            />
           </v-list-item-action>
           <v-list-item-action v-if="!path.endsWith('/')" class="my-0 mx-1">
             <tt-btn
@@ -41,11 +46,23 @@
 
 <script>
 import TtBtn from "./TtBtn.vue";
+import { ipcRenderer } from "electron";
 
 export default {
   components: { TtBtn },
   props: {
     dirents: Object,
+  },
+  methods: {
+    saveObject(path) {
+      let key =
+        this.$route.path.slice(1) + // remove the leading '/'
+        path;
+      ipcRenderer.send("save-object", {
+        key,
+        bucket: this.$store.state.bucketName,
+      });
+    },
   },
   computed: {
     pathNotEmpty() {

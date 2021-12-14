@@ -1,8 +1,12 @@
-import { ipcMain } from "electron";
+import { dialog, ipcMain } from "electron";
 import { defaultProvider } from "@aws-sdk/credential-provider-node";
+import { S3Client, GetObjectCommand } from "@aws-sdk/client-s3";
 import fs from "fs";
+import path from "path";
+import mainWindow from "./mainWindow";
 
 const CONFIG_FILE = "config.json";
+const s3 = new S3Client();
 
 ipcMain.on("get-aws-credentials", (event, arg) => {
   defaultProvider()().then((res) => {
@@ -37,4 +41,22 @@ ipcMain.on("load-config", (event, arg) => {
 
 ipcMain.on("update-config", (event, arg) => {
   fs.writeFile(CONFIG_FILE, JSON.stringify(arg), "utf-8", () => {});
+});
+
+ipcMain.on("save-object", async (event, arg) => {
+  const result = await dialog.showOpenDialog(mainWindow.browserWindow, {
+    properties: ["openDirectory"],
+  });
+  if (!result.canceled) {
+    let key = arg.key;
+    let filename = key.split("/").at(-1);
+    let folderPath = result.filePaths[0];
+    s3.send(new GetObjectCommand({ Bucket: arg.bucket, Key: arg.key })).then(
+      (res) => {
+        let ws = fs.createWriteStream(folderPath + path.sep + filename);
+        res.Body.pipe(ws);
+        res.Body.on("end", () => console.log("done"));
+      }
+    );
+  }
 });
