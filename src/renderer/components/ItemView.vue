@@ -7,8 +7,7 @@
         :size="50"
       ></v-progress-circular>
     </div>
-    <div v-else>
-      <div v-if="content.length">{{ content }}</div>
+      <pre v-if="content.length">{{ content }}</pre>
       <v-alert color="blue-grey" type="info" dense v-else>
         No content in this object.
       </v-alert>
