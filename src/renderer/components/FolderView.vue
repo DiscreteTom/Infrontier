@@ -1,6 +1,26 @@
 <template>
   <div>
-    <v-btn @click="refresh" block>Refresh</v-btn>
+    <div class="mx-3 my-1">
+      <v-tooltip top>
+        <template v-slot:activator="{ on }">
+          <v-btn icon v-on="on" @click="refresh">
+            <v-icon>mdi-refresh</v-icon>
+          </v-btn>
+        </template>
+        <span>Refresh</span>
+      </v-tooltip>
+
+      <v-tooltip top>
+        <template v-slot:activator="{ on }">
+          <v-btn icon v-on="on">
+            <v-icon>mdi-cloud-upload-outline</v-icon>
+          </v-btn>
+        </template>
+        <span>Upload</span>
+      </v-tooltip>
+    </div>
+
+    <v-divider></v-divider>
 
     <div v-if="loading" class="d-flex justify-center">
       <v-progress-circular
