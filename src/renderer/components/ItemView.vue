@@ -1,6 +1,5 @@
 <template>
   <div>
-    <bc-nav />
     <div v-if="loading" class="d-flex justify-center">
       <v-progress-circular
         indeterminate
@@ -15,7 +14,6 @@
 </template>
 
 <script>
-import BcNav from "./BcNav.vue";
 import { GetObjectCommand } from "@aws-sdk/client-s3";
 
 const streamToString = (stream) =>
@@ -27,7 +25,6 @@ const streamToString = (stream) =>
   });
 
 export default {
-  components: { BcNav },
   data() {
     return {
       path: "", // 'aaa/bbb/ccc'

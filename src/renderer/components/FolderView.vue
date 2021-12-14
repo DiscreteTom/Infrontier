@@ -1,6 +1,5 @@
 <template>
   <div>
-    <bc-nav />
     <v-btn @click="refresh" block>Refresh</v-btn>
 
     <div v-if="loading" class="d-flex justify-center">
@@ -21,11 +20,10 @@
 
 <script>
 import DirentList from "./DirentList.vue";
-import BcNav from "./BcNav.vue";
 import { ListObjectsV2Command, DeleteObjectCommand } from "@aws-sdk/client-s3";
 
 export default {
-  components: { DirentList, BcNav },
+  components: { DirentList },
   data() {
     return {
       path: "", // 'aaa/bbb/'
