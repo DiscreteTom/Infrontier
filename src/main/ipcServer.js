@@ -1,4 +1,4 @@
-import { dialog, ipcMain } from "electron";
+import { dialog, ipcMain, Notification } from "electron";
 import { defaultProvider } from "@aws-sdk/credential-provider-node";
 import { S3Client, GetObjectCommand } from "@aws-sdk/client-s3";
 import fs from "fs";
@@ -51,11 +51,19 @@ ipcMain.on("save-object", async (event, arg) => {
     let key = arg.key;
     let filename = key.split("/").at(-1);
     let folderPath = result.filePaths[0];
+    let targetFilePath = folderPath + path.sep + filename;
+
+    new Notification({ title: "Downloading", body: `Filename: ${key}` }).show();
     s3.send(new GetObjectCommand({ Bucket: arg.bucket, Key: arg.key })).then(
       (res) => {
-        let ws = fs.createWriteStream(folderPath + path.sep + filename);
+        let ws = fs.createWriteStream(targetFilePath);
         res.Body.pipe(ws);
-        res.Body.on("end", () => console.log("done"));
+        res.Body.on("end", () => {
+          new Notification({
+            title: "Downloaded",
+            body: `Location: ${targetFilePath}`,
+          }).show();
+        });
       }
     );
   }
