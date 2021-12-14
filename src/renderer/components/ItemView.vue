@@ -47,10 +47,10 @@ export default {
           }),
         })
         .then((res) => {
-          this.loading = false;
-          this.content = streamToString(res.Body).then(
-            (data) => (this.content = data)
-          );
+          this.content = streamToString(res.Body).then((data) => {
+            this.content = data;
+            this.loading = false;
+          });
         });
     },
   },
