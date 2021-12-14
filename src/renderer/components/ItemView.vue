@@ -8,7 +8,10 @@
       ></v-progress-circular>
     </div>
     <div v-else>
-      <div>{{ content }}</div>
+      <div v-if="content.length">{{ content }}</div>
+      <v-alert color="blue-grey" type="info" dense v-else>
+        No content in this object.
+      </v-alert>
     </div>
   </div>
 </template>
