@@ -56,8 +56,8 @@
     </v-app-bar>
 
     <!-- main content -->
-    <v-main>
-      <v-container>
+    <v-main style="height: 100vh">
+      <v-container style="height: 100%">
         <nuxt />
       </v-container>
     </v-main>
@@ -113,7 +113,10 @@ export default {
 </script>
 
 <style>
+html,
 body {
-  margin: 0 !important;
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
 }
 </style>

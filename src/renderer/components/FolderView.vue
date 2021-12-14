@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="d-flex flex-column" style="overflow: hidden">
     <div class="mx-3 my-1">
       <tt-btn top icon="mdi-refresh" tt="Refresh" @click="refresh" />
       <tt-btn top icon="mdi-cloud-upload-outline" tt="Upload" />
@@ -14,7 +14,7 @@
         :size="50"
       ></v-progress-circular>
     </div>
-    <div v-else>
+    <div v-else class="flex-grow-1" style="overflow: auto">
       <dirent-list
         :dirents="dirents"
         @delete-object="deleteObject"

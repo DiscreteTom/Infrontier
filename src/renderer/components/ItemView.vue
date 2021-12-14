@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="d-flex flex-column" style="overflow: hidden">
     <div v-if="loading" class="d-flex justify-center">
       <v-progress-circular
         indeterminate
@@ -7,6 +7,7 @@
         :size="50"
       ></v-progress-circular>
     </div>
+    <div v-else style="overflow: auto; width: 100%">
       <pre v-if="content.length">{{ content }}</pre>
       <v-alert color="blue-grey" type="info" dense v-else>
         No content in this object.

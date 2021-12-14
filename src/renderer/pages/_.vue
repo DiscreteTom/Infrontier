@@ -1,8 +1,12 @@
 <template>
-  <div>
+  <div style="height: 100%" class="d-flex flex-column">
     <bc-nav />
-    <folder-view v-if="$route.path.endsWith('/')" />
-    <item-view v-else />
+    <folder-view
+      v-if="$route.path.endsWith('/')"
+      class="flex-grow-1"
+      style="overflow: hidden"
+    />
+    <item-view v-else class="flex-grow-1" style="overflow: hidden" />
   </div>
 </template>
 
