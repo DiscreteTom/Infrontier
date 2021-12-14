@@ -4,7 +4,7 @@
       <v-btn
         :icon="icon.length != 0"
         v-on="on"
-        @click.stop="$emit('click')"
+        @click.stop.prevent="$emit('click')"
         :to="to"
       >
         <v-icon>{{ icon }}</v-icon>
