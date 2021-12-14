@@ -51,6 +51,7 @@
 import DirentList from "./DirentList.vue";
 import TtBtn from "./TtBtn.vue";
 import { ListObjectsV2Command, DeleteObjectCommand } from "@aws-sdk/client-s3";
+import { ipcRenderer } from "electron";
 
 export default {
   components: { DirentList, TtBtn },
@@ -117,7 +118,12 @@ export default {
     },
     onDrop(event) {
       this.dragEnterCount = 0;
-      console.log(event.dataTransfer.files[0]);
+      console.log();
+      ipcRenderer.send("upload-object", {
+        bucket: this.$store.state.bucketName,
+        localPath: event.dataTransfer.files[0].path,
+        key: this.path + event.dataTransfer.files[0].name,
+      });
     },
   },
   mounted() {

@@ -1,6 +1,10 @@
 import { dialog, ipcMain, Notification } from "electron";
 import { defaultProvider } from "@aws-sdk/credential-provider-node";
-import { S3Client, GetObjectCommand } from "@aws-sdk/client-s3";
+import {
+  S3Client,
+  GetObjectCommand,
+  PutObjectCommand,
+} from "@aws-sdk/client-s3";
 import fs from "fs";
 import path from "path";
 import mainWindow from "./mainWindow";
@@ -67,4 +71,20 @@ ipcMain.on("save-object", async (event, arg) => {
       }
     );
   }
+});
+
+ipcMain.on("upload-object", async (event, arg) => {
+  let rs = fs.createReadStream(arg.localPath);
+  new Notification({
+    title: "Uploading",
+    body: `File: ${arg.localPath}`,
+  }).show();
+  s3.send(
+    new PutObjectCommand({ Bucket: arg.bucket, Key: arg.key, Body: rs })
+  ).then((res) => {
+    new Notification({
+      title: "Uploaded",
+      body: `Path: ${arg.key}`,
+    }).show();
+  });
 });
