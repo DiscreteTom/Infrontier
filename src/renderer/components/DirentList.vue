@@ -18,28 +18,15 @@
           </v-list-item-content>
 
           <v-list-item-action v-if="!path.endsWith('/')" class="my-0 mx-1">
-            <v-tooltip top>
-              <template v-slot:activator="{ on }">
-                <v-btn icon v-on="on">
-                  <v-icon>mdi-cloud-download-outline</v-icon>
-                </v-btn>
-              </template>
-              <span>Download</span>
-            </v-tooltip>
+            <tt-btn top icon="mdi-cloud-download-outline" tt="Download" />
           </v-list-item-action>
           <v-list-item-action v-if="!path.endsWith('/')" class="my-0 mx-1">
-            <v-tooltip top>
-              <template v-slot:activator="{ on }">
-                <v-btn
-                  icon
-                  v-on="on"
-                  @click.stop="$emit('delete-object', path)"
-                >
-                  <v-icon>mdi-delete-outline</v-icon>
-                </v-btn>
-              </template>
-              <span>Delete</span>
-            </v-tooltip>
+            <tt-btn
+              top
+              icon="mdi-delete-outline"
+              tt="Delete"
+              @click="$emit('delete-object', path)"
+            />
           </v-list-item-action>
         </v-list-item>
       </template>
@@ -53,7 +40,10 @@
 </template>
 
 <script>
+import TtBtn from "./TtBtn.vue";
+
 export default {
+  components: { TtBtn },
   props: {
     dirents: Object,
   },

@@ -44,24 +44,15 @@
       <v-spacer />
 
       <!-- add button -->
-      <v-tooltip bottom>
-        <template v-slot:activator="{ on }">
-          <v-btn icon v-on="on" :to="`/add?path=${encodedPath()}`">
-            <v-icon> mdi-plus </v-icon>
-          </v-btn>
-        </template>
-        <span>New Folder</span>
-      </v-tooltip>
+      <tt-btn
+        bottom
+        :to="`/add?path=${encodedPath()}`"
+        icon="mdi-plus"
+        tt="New Folder"
+      />
 
       <!-- settings button -->
-      <v-tooltip bottom>
-        <template v-slot:activator="{ on }">
-          <v-btn icon v-on="on" to="/settings">
-            <v-icon> mdi-cog-outline </v-icon>
-          </v-btn>
-        </template>
-        <span>Settings</span>
-      </v-tooltip>
+      <tt-btn bottom to="/settings" icon="mdi-cog-outline" tt="Settings" />
     </v-app-bar>
 
     <!-- main content -->
@@ -74,10 +65,12 @@
 </template>
 
 <script>
+import TtBtn from "../components/TtBtn.vue";
 import { ipcRenderer } from "electron";
 import { ListObjectsV2Command } from "@aws-sdk/client-s3";
 
 export default {
+  components: { TtBtn },
   data() {
     return {
       leftDrawer: true,

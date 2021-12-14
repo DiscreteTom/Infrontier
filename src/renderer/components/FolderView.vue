@@ -1,23 +1,8 @@
 <template>
   <div>
     <div class="mx-3 my-1">
-      <v-tooltip top>
-        <template v-slot:activator="{ on }">
-          <v-btn icon v-on="on" @click="refresh">
-            <v-icon>mdi-refresh</v-icon>
-          </v-btn>
-        </template>
-        <span>Refresh</span>
-      </v-tooltip>
-
-      <v-tooltip top>
-        <template v-slot:activator="{ on }">
-          <v-btn icon v-on="on">
-            <v-icon>mdi-cloud-upload-outline</v-icon>
-          </v-btn>
-        </template>
-        <span>Upload</span>
-      </v-tooltip>
+      <tt-btn top icon="mdi-refresh" tt="Refresh" @click="refresh" />
+      <tt-btn top icon="mdi-cloud-upload-outline" tt="Upload" />
     </div>
 
     <v-divider></v-divider>
@@ -40,10 +25,11 @@
 
 <script>
 import DirentList from "./DirentList.vue";
+import TtBtn from "./TtBtn.vue";
 import { ListObjectsV2Command, DeleteObjectCommand } from "@aws-sdk/client-s3";
 
 export default {
-  components: { DirentList },
+  components: { DirentList, TtBtn },
   data() {
     return {
       path: "", // 'aaa/bbb/'
