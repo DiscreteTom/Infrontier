@@ -14,7 +14,31 @@
         :size="50"
       ></v-progress-circular>
     </div>
-    <div v-else class="flex-grow-1" style="overflow: auto">
+    <div
+      v-else
+      class="flex-grow-1"
+      style="overflow: auto"
+      @dragenter.prevent.stop="dragEnterCount++"
+      @dragleave.prevent.stop="dragEnterCount--"
+      @dragover.prevent.stop
+      @drop.prevent="onDrop"
+    >
+      <div
+        v-if="dragEnterCount > 0"
+        style="
+          position: absolute;
+          width: 100%;
+          height: 100%;
+          background: #00000061;
+          z-index: 1;
+        "
+        class="d-flex flex-column justify-center align-center"
+      >
+        <v-icon color="white" style="font-size: 120px">
+          mdi-cloud-upload-outline
+        </v-icon>
+        <span style="color: white; font-size: 50px"> Drop file to upload </span>
+      </div>
       <dirent-list
         :dirents="dirents"
         @delete-object="deleteObject"
@@ -35,6 +59,7 @@ export default {
       path: "", // 'aaa/bbb/'
       loading: false,
       dirents: {},
+      dragEnterCount: 0,
     };
   },
   methods: {
@@ -89,6 +114,10 @@ export default {
           console.log(res);
           this.refresh();
         });
+    },
+    onDrop(event) {
+      this.dragEnterCount = 0;
+      console.log(event.dataTransfer.files[0]);
     },
   },
   mounted() {
