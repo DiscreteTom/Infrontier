@@ -38,7 +38,7 @@
                     {{ timeSince(Date.parse(content.LastModified)) }} ago
                   </v-chip>
                 </template>
-                <span> ISO: {{ content.LastModified }} </span>
+                <span> {{ new Date(content.LastModified) }} </span>
               </v-tooltip>
             </v-list-item-title>
           </v-list-item-content>
