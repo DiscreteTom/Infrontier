@@ -37,10 +37,14 @@ export default {
           })
         )
         .then((res) => {
-          this.alertText = "Created";
-          this.alertType = "success";
-          this.alert = true;
           this.btnLoading = false;
+
+          if (this.key.split("/").length == 2) {
+            // new top level folder
+            this.$bus.$emit("refresh-folder-list");
+          }
+          // navigate to the folder
+          this.$router.push(`/${this.key}`);
         })
         .catch((err) => {
           this.alertText = `Error: ${err}`;

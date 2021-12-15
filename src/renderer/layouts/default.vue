@@ -106,6 +106,7 @@ export default {
     ipcRenderer.on("refresh-folder-list", (event, arg) => {
       this.refreshFolderList();
     });
+    this.$bus.$on("refresh-folder-list", this.refreshFolderList);
 
     ipcRenderer.send("load-config");
     ipcRenderer.send("get-aws-credentials");
