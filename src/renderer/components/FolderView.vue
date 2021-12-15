@@ -132,6 +132,16 @@ export default {
           bucket: this.$store.state.bucketName,
           prefix: this.path + key,
         });
+        if (key.length == 0) {
+          // deleting current folder, navigate to the parent path
+          if (this.path.split("/").length == 2) {
+            this.$router.push("/");
+          } else {
+            this.$router.push(
+              "/" + this.path.split("/").slice(0, -2).join("/") + "/"
+            );
+          }
+        }
       }
     },
     onDrop(event) {
