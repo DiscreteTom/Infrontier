@@ -3,6 +3,12 @@
     <div class="mx-3 my-1">
       <tt-btn top icon="mdi-refresh" tt="Refresh" @click="refresh" />
       <tt-btn top icon="mdi-cloud-upload-outline" tt="Upload" @click="upload" />
+      <tt-btn
+        top
+        icon="mdi-delete-outline"
+        tt="Delete this folder"
+        @click="deleteObjectOrFolder('')"
+      />
       <input
         type="file"
         ref="fileInput"
@@ -106,7 +112,7 @@ export default {
         });
     },
     deleteObjectOrFolder(key) {
-      if (!key.endsWith("/")) {
+      if (!key.endsWith("/") && key.length != 0) {
         // delete one object
         this.loading = true;
         key = this.path + key;
