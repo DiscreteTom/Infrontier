@@ -51,12 +51,12 @@
               @click="saveObject(path)"
             />
           </v-list-item-action>
-          <v-list-item-action v-if="!path.endsWith('/')" class="my-0 mx-1">
+          <v-list-item-action class="my-0 mx-1">
             <tt-btn
               top
               icon="mdi-delete-outline"
               tt="Delete"
-              @click="$emit('delete-object', path)"
+              @click="$emit('delete-object-or-folder', path)"
             />
           </v-list-item-action>
         </v-list-item>

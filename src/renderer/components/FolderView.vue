@@ -47,7 +47,7 @@
       </div>
       <dirent-list
         :dirents="dirents"
-        @delete-object="deleteObject"
+        @delete-object-or-folder="deleteObjectOrFolder"
       ></dirent-list>
     </div>
   </div>
@@ -105,22 +105,31 @@ export default {
           this.$store.commit("updateFolder", { path: this.path, content });
         });
     },
-    deleteObject(key) {
-      this.loading = true;
-      key = this.path + key;
-      this.$store
-        .dispatch("callAws", {
-          service: "s3",
-          params: new DeleteObjectCommand({
-            Bucket: this.$store.state.bucketName,
-            Key: key,
-          }),
-        })
-        .then((res) => {
-          this.loading = false;
-          console.log(res);
-          this.refresh();
+    deleteObjectOrFolder(key) {
+      if (!key.endsWith("/")) {
+        // delete one object
+        this.loading = true;
+        key = this.path + key;
+        this.$store
+          .dispatch("callAws", {
+            service: "s3",
+            params: new DeleteObjectCommand({
+              Bucket: this.$store.state.bucketName,
+              Key: key,
+            }),
+          })
+          .then((res) => {
+            this.loading = false;
+            console.log(res);
+            this.refresh();
+          });
+      } else {
+        // delete a folder, use main process
+        ipcRenderer.send("delete-folder", {
+          bucket: this.$store.state.bucketName,
+          prefix: this.path + key,
         });
+      }
     },
     onDrop(event) {
       this.dragEnterCount = 0;

@@ -4,6 +4,8 @@ import {
   S3Client,
   GetObjectCommand,
   PutObjectCommand,
+  ListObjectsV2Command,
+  DeleteObjectsCommand,
 } from "@aws-sdk/client-s3";
 import fs from "fs";
 import path from "path";
@@ -87,4 +89,40 @@ ipcMain.on("upload-object", async (event, arg) => {
       body: `Path: ${arg.key}`,
     }).show();
   });
+});
+
+ipcMain.on("delete-folder", async (event, arg) => {
+  new Notification({
+    title: "Deletion started",
+    body: `Folder: ${arg.prefix}`,
+  }).show();
+  while (true) {
+    // res will contain less than 1000 objects
+    let res = await s3.send(
+      new ListObjectsV2Command({
+        Bucket: arg.bucket,
+        Prefix: arg.prefix,
+      })
+    );
+    if (!res.Contents || !res.Contents.length)
+      // no more objects
+      break;
+
+    let targets = [];
+    res.Contents.map((obj) => {
+      targets.push({ Key: obj.Key });
+    });
+    await s3.send(
+      new DeleteObjectsCommand({
+        Bucket: arg.bucket,
+        Delete: {
+          Objects: targets,
+        },
+      })
+    );
+  }
+  new Notification({
+    title: "Deletion completed",
+    body: `Folder: ${arg.prefix}`,
+  }).show();
 });
