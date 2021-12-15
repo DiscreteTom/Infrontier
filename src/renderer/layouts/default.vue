@@ -112,7 +112,8 @@ export default {
       this.$store.commit("loadConfig", arg);
     });
     ipcRenderer.on("get-aws-credentials", (event, arg) => {
-      this.$aws.configure(arg);
+      this.$aws.configure({ ...arg, region: this.$store.state.region });
+      this.refreshFolderList();
     });
     ipcRenderer.on("refresh-folder-list", (event, arg) => {
       this.refreshFolderList();
@@ -120,7 +121,7 @@ export default {
     this.$bus.$on("refresh-folder-list", this.refreshFolderList);
 
     ipcRenderer.send("load-config");
-    ipcRenderer.send("get-aws-credentials");
+    ipcRenderer.send("get-aws-credentials", this.$store.state.profile);
   },
 };
 </script>

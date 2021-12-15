@@ -22,7 +22,8 @@ export default {
   state() {
     return {
       bucketName: "",
-      profileName: "default",
+      region: "us-east-1",
+      profile: "default",
       /**
        * folderName => dirent (folder or file)
        */
@@ -38,9 +39,10 @@ export default {
         }
       }
     },
-    updateConfig(state, { bucketName, profileName }) {
-      state.profileName = profileName;
+    updateConfig(state, { bucketName, profile, region }) {
+      state.profile = profile;
       state.bucketName = bucketName;
+      state.region = region;
       persistConfig(state);
     },
     updateFolderList(state, { folderNames }) {

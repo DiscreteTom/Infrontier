@@ -15,7 +15,7 @@ const CONFIG_FILE = "config.json";
 const s3 = new S3Client();
 
 ipcMain.on("get-aws-credentials", (event, arg) => {
-  defaultProvider()().then((res) => {
+  defaultProvider({ profile: arg || "default" })().then((res) => {
     event.reply("get-aws-credentials", res);
   });
 });
@@ -26,7 +26,7 @@ ipcMain.on("load-config", (event, arg) => {
       // if no config file
       let defaultConfig = {
         bucketName: "",
-        profileName: "default",
+        profile: "default",
         folders: [],
         defaultEncrypt: "",
       };
