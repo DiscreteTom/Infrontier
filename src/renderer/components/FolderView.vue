@@ -2,7 +2,13 @@
   <div class="d-flex flex-column" style="overflow: hidden">
     <div class="mx-3 my-1">
       <tt-btn top icon="mdi-refresh" tt="Refresh" @click="refresh" />
-      <tt-btn top icon="mdi-cloud-upload-outline" tt="Upload" />
+      <tt-btn top icon="mdi-cloud-upload-outline" tt="Upload" @click="upload" />
+      <input
+        type="file"
+        ref="fileInput"
+        style="display: none"
+        @change="fileChosen"
+      />
     </div>
 
     <v-divider></v-divider>
@@ -118,11 +124,20 @@ export default {
     },
     onDrop(event) {
       this.dragEnterCount = 0;
-      console.log();
       ipcRenderer.send("upload-object", {
         bucket: this.$store.state.bucketName,
         localPath: event.dataTransfer.files[0].path,
         key: this.path + event.dataTransfer.files[0].name,
+      });
+    },
+    upload() {
+      this.$refs.fileInput.click();
+    },
+    fileChosen(event) {
+      ipcRenderer.send("upload-object", {
+        bucket: this.$store.state.bucketName,
+        localPath: event.target.files[0].path,
+        key: this.path + event.target.files[0].name,
       });
     },
   },
