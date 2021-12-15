@@ -103,6 +103,9 @@ export default {
     ipcRenderer.on("get-aws-credentials", (event, arg) => {
       this.$aws.configure(arg);
     });
+    ipcRenderer.on("refresh-folder-list", (event, arg) => {
+      this.refreshFolderList();
+    });
 
     ipcRenderer.send("load-config");
     ipcRenderer.send("get-aws-credentials");

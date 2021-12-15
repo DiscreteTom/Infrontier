@@ -125,4 +125,9 @@ ipcMain.on("delete-folder", async (event, arg) => {
     title: "Deletion completed",
     body: `Folder: ${arg.prefix}`,
   }).show();
+
+  if (arg.prefix.split("/").length == 2) {
+    // this is a top level folder
+    event.reply("refresh-folder-list", "");
+  }
 });
