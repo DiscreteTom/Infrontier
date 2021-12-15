@@ -29,23 +29,20 @@ export default {
       this.btnLoading = true;
       if (!this.key.endsWith("/")) this.key += "/";
 
-      this.$store
-        .dispatch("callAws", {
-          service: "s3",
-          params: new PutObjectCommand({
+      this.$aws.s3
+        .send(
+          new PutObjectCommand({
             Bucket: this.$store.state.bucketName,
             Key: this.key,
-          }),
-        })
+          })
+        )
         .then((res) => {
-          console.log(res);
           this.alertText = "Created";
           this.alertType = "success";
           this.alert = true;
           this.btnLoading = false;
         })
         .catch((err) => {
-          console.log(err);
           this.alertText = `Error: ${err}`;
           this.alertType = "error";
           this.alert = true;

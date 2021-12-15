@@ -78,15 +78,14 @@ export default {
   methods: {
     refresh() {
       this.loading = true;
-      this.$store
-        .dispatch("callAws", {
-          service: "s3",
-          params: new ListObjectsV2Command({
+      this.$aws.s3
+        .send(
+          new ListObjectsV2Command({
             Bucket: this.$store.state.bucketName,
             Prefix: this.path,
             Delimiter: "/",
-          }),
-        })
+          })
+        )
         .then((res) => {
           this.loading = false;
           let content = {};
@@ -116,17 +115,15 @@ export default {
         // delete one object
         this.loading = true;
         key = this.path + key;
-        this.$store
-          .dispatch("callAws", {
-            service: "s3",
-            params: new DeleteObjectCommand({
+        this.$aws.s3
+          .send(
+            new DeleteObjectCommand({
               Bucket: this.$store.state.bucketName,
               Key: key,
-            }),
-          })
+            })
+          )
           .then((res) => {
             this.loading = false;
-            console.log(res);
             this.refresh();
           });
       } else {

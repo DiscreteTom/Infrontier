@@ -17,7 +17,10 @@ module.exports = {
   ],
 
   loading: false,
-  plugins: [{ ssr: true, src: "@/plugins/icons.js" }],
+  plugins: [
+    { ssr: true, src: "@/plugins/icons.js" },
+    { src: "@/plugins/aws.js" },
+  ],
   buildModules: [],
   modules: ["@nuxtjs/vuetify"],
   vuetify: {

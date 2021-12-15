@@ -1,7 +1,4 @@
 import { ipcRenderer } from "electron";
-import { S3Client } from "@aws-sdk/client-s3";
-
-let aws = {};
 
 function persistConfig(state) {
   ipcRenderer.send("update-config", state);
@@ -41,14 +38,6 @@ export default {
         }
       }
     },
-    initAws(_, { accessKeyId, secretAccessKey }) {
-      aws["s3"] = new S3Client({
-        credentials: {
-          accessKeyId,
-          secretAccessKey,
-        },
-      });
-    },
     updateConfig(state, { bucketName, profileName }) {
       state.profileName = profileName;
       state.bucketName = bucketName;
@@ -85,11 +74,6 @@ export default {
      */
     folder: (state) => (path) => {
       return getFolder(state.folders, path);
-    },
-  },
-  actions: {
-    callAws(_, { service, params }) {
-      return aws[service].send(params);
     },
   },
 };

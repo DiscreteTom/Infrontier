@@ -78,16 +78,14 @@ export default {
   },
   methods: {
     refreshFolderList() {
-      this.$store
-        .dispatch("callAws", {
-          service: "s3",
-          params: new ListObjectsV2Command({
+      this.$aws.s3
+        .send(
+          new ListObjectsV2Command({
             Bucket: this.$store.state.bucketName,
             Delimiter: "/",
-          }),
-        })
+          })
+        )
         .then((res) => {
-          console.log(res);
           if (res.CommonPrefixes) {
             let folderNames = res.CommonPrefixes.map((e) => e.Prefix);
             this.$store.commit("updateFolderList", { folderNames });
@@ -103,7 +101,7 @@ export default {
       this.$store.commit("loadConfig", arg);
     });
     ipcRenderer.on("get-aws-credentials", (event, arg) => {
-      this.$store.commit("initAws", arg);
+      this.$aws.configure(arg);
     });
 
     ipcRenderer.send("load-config");

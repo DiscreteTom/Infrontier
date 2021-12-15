@@ -38,14 +38,13 @@ export default {
   methods: {
     refresh() {
       this.loading = true;
-      this.$store
-        .dispatch("callAws", {
-          service: "s3",
-          params: new GetObjectCommand({
+      this.$aws.s3
+        .send(
+          new GetObjectCommand({
             Bucket: this.$store.state.bucketName,
             Key: this.path,
-          }),
-        })
+          })
+        )
         .then((res) => {
           this.content = streamToString(res.Body).then((data) => {
             this.content = data;
