@@ -15,7 +15,14 @@
 
       <v-divider></v-divider>
 
-      <v-list dense nav>
+      <div v-if="loading" class="d-flex justify-center">
+        <v-progress-circular
+          indeterminate
+          color="primary"
+          :size="50"
+        ></v-progress-circular>
+      </div>
+      <v-list dense nav v-else>
         <v-list-item
           v-for="(detail, name) in $store.state.folders"
           :key="name"
@@ -74,10 +81,12 @@ export default {
   data() {
     return {
       leftDrawer: true,
+      loading: false,
     };
   },
   methods: {
     refreshFolderList() {
+      this.loading = true;
       this.$aws.s3
         .send(
           new ListObjectsV2Command({
@@ -90,6 +99,7 @@ export default {
             let folderNames = res.CommonPrefixes.map((e) => e.Prefix);
             this.$store.commit("updateFolderList", { folderNames });
           }
+          this.loading = false;
         });
     },
     encodedPath() {
