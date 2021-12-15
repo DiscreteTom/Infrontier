@@ -20,6 +20,7 @@
           indeterminate
           color="primary"
           :size="50"
+          class="my-3"
         ></v-progress-circular>
       </div>
       <v-list dense nav v-else>

@@ -24,6 +24,7 @@
         indeterminate
         color="primary"
         :size="50"
+        class="my-3"
       ></v-progress-circular>
     </div>
     <div
