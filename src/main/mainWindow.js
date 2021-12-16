@@ -7,7 +7,8 @@ const winHandler = new BrowserWinHandler({
 
 winHandler.onCreated((_browserWindow) => {
   winHandler.loadPage("/");
-  _browserWindow.removeMenu();
+
+  if (process.env.NODE_ENV != "development") _browserWindow.removeMenu();
   // Or load custom url
   // _browserWindow.loadURL('https://google.com')
 });
