@@ -29,6 +29,8 @@ export default {
        */
       folders: {},
       defaultEncrypt: "",
+      multipartUploadThreshold: 100,
+      multipartUploadChunkSize: 5,
     };
   },
   mutations: {
@@ -39,10 +41,12 @@ export default {
         }
       }
     },
-    updateConfig(state, { bucketName, profile, region }) {
-      state.profile = profile;
-      state.bucketName = bucketName;
-      state.region = region;
+    updateConfig(state, config) {
+      for (let key in state) {
+        if (config[key]) {
+          state[key] = config[key];
+        }
+      }
       persistConfig(state);
     },
     updateFolderList(state, { folderNames }) {

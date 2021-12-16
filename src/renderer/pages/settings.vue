@@ -12,6 +12,19 @@
       v-model="region"
       placeholder="us-east-1"
     ></v-text-field>
+
+    <!-- multipart upload -->
+    <v-text-field
+      label="Multipart Upload Threshold (MB)"
+      v-model="multipartUploadThreshold"
+      placeholder="100"
+    ></v-text-field>
+    <v-text-field
+      label="Multipart Upload Minimal Chunk Size (MB)"
+      v-model="multipartUploadChunkSize"
+      placeholder="5"
+    ></v-text-field>
+
     <v-btn @click="save">Save</v-btn>
     <v-btn @click="resetForm">Reset</v-btn>
   </div>
@@ -27,6 +40,8 @@ export default {
       profile: "default",
       bucketName: "",
       region: "us-east-1",
+      multipartUploadThreshold: 100,
+      multipartUploadChunkSize: 5,
     };
   },
   methods: {
@@ -34,12 +49,18 @@ export default {
       this.profile = this.$store.state.profile;
       this.bucketName = this.$store.state.bucketName;
       this.region = this.$store.state.region;
+      this.multipartUploadThreshold =
+        this.$store.state.multipartUploadThreshold;
+      this.multipartUploadChunkSize =
+        this.$store.state.multipartUploadChunkSize;
     },
     save() {
       this.$store.commit("updateConfig", {
         profile: this.profile,
         bucketName: this.bucketName,
         region: this.region,
+        multipartUploadThreshold: this.multipartUploadThreshold,
+        multipartUploadChunkSize: this.multipartUploadChunkSize,
       });
       this.alert = true;
       ipcRenderer.send("get-aws-credentials", {

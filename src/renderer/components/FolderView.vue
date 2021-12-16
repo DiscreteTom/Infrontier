@@ -153,6 +153,8 @@ export default {
         bucket: this.$store.state.bucketName,
         localPath: event.dataTransfer.files[0].path,
         key: this.path + event.dataTransfer.files[0].name,
+        chunkSize: this.$store.state.multipartUploadChunkSize,
+        multipartThreshold: this.$store.state.multipartUploadThreshold,
       });
     },
     upload() {
@@ -163,6 +165,8 @@ export default {
         bucket: this.$store.state.bucketName,
         localPath: event.target.files[0].path,
         key: this.path + event.target.files[0].name,
+        chunkSize: this.$store.state.multipartUploadChunkSize,
+        multipartThreshold: this.$store.state.multipartUploadThreshold,
       });
     },
   },

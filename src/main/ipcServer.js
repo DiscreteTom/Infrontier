@@ -6,8 +6,11 @@ import {
   PutObjectCommand,
   ListObjectsV2Command,
   DeleteObjectsCommand,
+  CreateMultipartUploadCommand,
+  UploadPartCommand,
+  CompleteMultipartUploadCommand,
 } from "@aws-sdk/client-s3";
-import fs from "fs";
+import fs, { fstatSync } from "fs";
 import path from "path";
 import mainWindow from "./mainWindow";
 
@@ -80,23 +83,82 @@ ipcMain.on("save-object", async (event, arg) => {
 });
 
 ipcMain.on("upload-object", async (event, arg) => {
-  let rs = fs.createReadStream(arg.localPath);
   new Notification({
     title: "Uploading",
     body: `File: ${arg.localPath}`,
   }).show();
-  aws.s3
-    .send(new PutObjectCommand({ Bucket: arg.bucket, Key: arg.key, Body: rs }))
-    .then((res) => {
-      new Notification({
-        title: "Uploaded",
-        body: `Path: ${arg.key}`,
-      }).show();
-      event.reply(
-        "refresh-folder",
-        arg.key.split("/").slice(0, -1).join("/") + "/"
+
+  let fileSize = fs.statSync(arg.localPath).size;
+  if (fileSize <= arg.multipartThreshold * 1024 * 1024) {
+    // normal upload without multipart
+    let rs = fs.createReadStream(arg.localPath);
+    await aws.s3.send(
+      new PutObjectCommand({ Bucket: arg.bucket, Key: arg.key, Body: rs })
+    );
+  } else {
+    // multipart upload
+    let chunkSize = arg.chunkSize * 1024 * 1024;
+    if (chunkSize * 10000 < fileSize) {
+      // max part count is 10000
+      chunkSize = Math.floor(fileSize / 10000) + 1;
+    }
+
+    console.log(`multipart upload, chunk size=${chunkSize}`);
+
+    let res = await aws.s3.send(
+      new CreateMultipartUploadCommand({ Bucket: arg.bucket, Key: arg.key })
+    );
+
+    console.log("multipart upload created");
+
+    let uploadId = res.UploadId;
+    let start = 0;
+    let partNumber = 0;
+    let parts = [];
+    while (true) {
+      partNumber++;
+      let end = start + chunkSize;
+      if (end >= fileSize) end = fileSize - 1;
+      let rs = fs.createReadStream(arg.localPath, { start, end });
+
+      console.log(
+        `start uploading part ${partNumber}, start=${start}, end=${end}`
       );
-    });
+
+      await aws.s3
+        .send(
+          new UploadPartCommand({
+            Bucket: arg.bucket,
+            Key: arg.key,
+            PartNumber: partNumber,
+            UploadId: uploadId,
+            Body: await streamToBuffer(rs),
+          })
+        )
+        .then((res) => {
+          parts.push({ PartNumber: partNumber, ETag: res.ETag });
+          console.log(`part ${partNumber} finished`);
+        });
+      if (end == fileSize - 1) break;
+      start = end + 1;
+    }
+    await aws.s3.send(
+      new CompleteMultipartUploadCommand({
+        Bucket: arg.bucket,
+        Key: arg.key,
+        UploadId: uploadId,
+        MultipartUpload: { Parts: parts },
+      })
+    );
+  }
+  new Notification({
+    title: "Uploaded",
+    body: `Path: ${arg.key}`,
+  }).show();
+  event.reply(
+    "refresh-folder",
+    arg.key.split("/").slice(0, -1).join("/") + "/"
+  );
 });
 
 ipcMain.on("delete-folder", async (event, arg) => {
@@ -145,3 +207,11 @@ ipcMain.on("delete-folder", async (event, arg) => {
     );
   }
 });
+
+const streamToBuffer = (stream) =>
+  new Promise((resolve, reject) => {
+    const chunks = [];
+    stream.on("data", (chunk) => chunks.push(chunk));
+    stream.on("error", reject);
+    stream.on("end", () => resolve(Buffer.concat(chunks)));
+  });
