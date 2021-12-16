@@ -17,9 +17,7 @@ let aws = {};
 ipcMain.on("get-aws-credentials", (event, arg) => {
   defaultProvider({ profile: arg.profile || "default" })().then((res) => {
     aws["s3"] = new S3Client({
-      credentials: {
-        ...res,
-      },
+      credentials: res,
       region: arg.region,
     });
     event.reply("get-aws-credentials", res);
