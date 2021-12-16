@@ -37,7 +37,8 @@
     "roboto-fontface": "^0.10.0",
     "vuetify": "^2.5.10",
     "webpack": "^4.46.0",
-    "webpack-node-externals": "^3.0.0"
+    "webpack-node-externals": "^3.0.0",
+    "sass-loader": "^10"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.43.0",
