@@ -113,10 +113,12 @@ export default {
   created() {
     ipcRenderer.on("load-config", (event, arg) => {
       this.$store.commit("loadConfig", arg);
-      ipcRenderer.send("get-aws-credentials", {
-        profile: this.$store.state.profile,
-        region: this.$store.state.region,
-      });
+      if (this.$store.state.bucketName) {
+        ipcRenderer.send("get-aws-credentials", {
+          profile: this.$store.state.profile,
+          region: this.$store.state.region,
+        });
+      }
     });
     ipcRenderer.on("get-aws-credentials", (event, arg) => {
       this.$aws.configure({ ...arg, region: this.$store.state.region });
