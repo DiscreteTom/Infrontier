@@ -9,7 +9,7 @@
       ></v-progress-circular>
     </div>
     <div v-else style="overflow: auto; width: 100%">
-      <pre v-if="content.length">{{ content }}</pre>
+      <file-content v-if="content && content.length" :content="content" />
       <v-alert color="blue-grey" type="info" dense v-else>
         No content in this object.
       </v-alert>
@@ -19,21 +19,23 @@
 
 <script>
 import { GetObjectCommand } from "@aws-sdk/client-s3";
+import FileContent from "./FileContent.vue";
 
-const streamToString = (stream) =>
+const streamToBytes = (stream) =>
   new Promise((resolve, reject) => {
     const chunks = [];
     stream.on("data", (chunk) => chunks.push(chunk));
     stream.on("error", reject);
-    stream.on("end", () => resolve(Buffer.concat(chunks).toString("utf8")));
+    stream.on("end", () => resolve(Buffer.concat(chunks)));
   });
 
 export default {
+  components: { FileContent },
   data() {
     return {
       path: "", // 'aaa/bbb/ccc'
       loading: false,
-      content: "",
+      content: null,
     };
   },
   methods: {
@@ -47,7 +49,7 @@ export default {
           })
         )
         .then((res) => {
-          this.content = streamToString(res.Body).then((data) => {
+          this.content = streamToBytes(res.Body).then((data) => {
             this.content = data;
             this.loading = false;
           });
