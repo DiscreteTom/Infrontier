@@ -31,6 +31,8 @@ export default {
       defaultEncrypt: "",
       multipartUploadThreshold: 100,
       multipartUploadChunkSize: 5,
+      multipartDownloadThreshold: 100,
+      multipartDownloadChunkSize: 5,
     };
   },
   mutations: {

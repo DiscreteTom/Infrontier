@@ -25,6 +25,18 @@
       placeholder="5"
     ></v-text-field>
 
+    <!-- multipart download -->
+    <v-text-field
+      label="Multipart Download Threshold (MB)"
+      v-model="multipartDownloadThreshold"
+      placeholder="100"
+    ></v-text-field>
+    <v-text-field
+      label="Multipart Download Chunk Size (MB)"
+      v-model="multipartDownloadChunkSize"
+      placeholder="5"
+    ></v-text-field>
+
     <v-btn @click="save">Save</v-btn>
     <v-btn @click="resetForm">Reset</v-btn>
   </div>
@@ -42,6 +54,8 @@ export default {
       region: "us-east-1",
       multipartUploadThreshold: 100,
       multipartUploadChunkSize: 5,
+      multipartDownloadThreshold: 100,
+      multipartDownloadChunkSize: 5,
     };
   },
   methods: {
@@ -53,6 +67,10 @@ export default {
         this.$store.state.multipartUploadThreshold;
       this.multipartUploadChunkSize =
         this.$store.state.multipartUploadChunkSize;
+      this.multipartDownloadThreshold =
+        this.$store.state.multipartDownloadThreshold;
+      this.multipartDownloadChunkSize =
+        this.$store.state.multipartDownloadChunkSize;
     },
     save() {
       this.$store.commit("updateConfig", {
@@ -61,6 +79,8 @@ export default {
         region: this.region,
         multipartUploadThreshold: this.multipartUploadThreshold,
         multipartUploadChunkSize: this.multipartUploadChunkSize,
+        multipartDownloadThreshold: this.multipartDownloadThreshold,
+        multipartDownloadChunkSize: this.multipartDownloadChunkSize,
       });
       this.alert = true;
       ipcRenderer.send("get-aws-credentials", {

@@ -65,20 +65,60 @@ ipcMain.on("save-object", async (event, arg) => {
     let filename = key.split("/").at(-1);
     let folderPath = result.filePaths[0];
     let targetFilePath = folderPath + path.sep + filename;
+    let ws = fs.createWriteStream(targetFilePath);
 
     new Notification({ title: "Downloading", body: `Filename: ${key}` }).show();
-    aws.s3
-      .send(new GetObjectCommand({ Bucket: arg.bucket, Key: arg.key }))
-      .then((res) => {
-        let ws = fs.createWriteStream(targetFilePath);
-        res.Body.pipe(ws);
-        res.Body.on("end", () => {
-          new Notification({
-            title: "Downloaded",
-            body: `Location: ${targetFilePath}`,
-          }).show();
-        });
+
+    if (arg.size < arg.multipartThreshold * 1024 * 1024) {
+      // simple download without multipart
+      let res = await aws.s3.send(
+        new GetObjectCommand({ Bucket: arg.bucket, Key: arg.key })
+      );
+      res.Body.pipe(ws);
+      res.Body.on("end", () => {
+        new Notification({
+          title: "Downloaded",
+          body: `Location: ${targetFilePath}`,
+        }).show();
       });
+    } else {
+      // multipart download
+      console.log(`multipart download, chunkSize=${arg.chunkSize}MB`);
+
+      let start = 0;
+      while (true) {
+        let end = start + arg.chunkSize * 1024 * 1024;
+        if (end >= arg.size) end = arg.size - 1;
+
+        console.log(`downloading bytes=${start}-${end}`);
+
+        let res = await aws.s3.send(
+          new GetObjectCommand({
+            Bucket: arg.bucket,
+            Key: arg.key,
+            Range: `bytes=${start}-${end}`,
+          })
+        );
+        if (end != arg.size - 1) res.Body.pipe(ws, { end: false });
+        else res.Body.pipe(ws);
+        let waiter = new Promise(function (resolve, reject) {
+          res.Body.on("end", () => {
+            resolve();
+          });
+          res.Body.on("error", reject);
+        });
+        await waiter;
+
+        console.log(`finish bytes=${start}-${end}`);
+
+        if (end == arg.size - 1) break;
+        start = end + 1;
+      }
+      new Notification({
+        title: "Downloaded",
+        body: `Location: ${targetFilePath}`,
+      }).show();
+    }
   }
 });
 

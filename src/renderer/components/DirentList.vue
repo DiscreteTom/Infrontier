@@ -48,7 +48,7 @@
               top
               icon="mdi-cloud-download-outline"
               tt="Download"
-              @click="saveObject(path)"
+              @click="saveObject(path, content.Size)"
             />
           </v-list-item-action>
           <v-list-item-action class="my-0 mx-1">
@@ -80,13 +80,16 @@ export default {
     dirents: Object,
   },
   methods: {
-    saveObject(path) {
+    saveObject(path, size) {
       let key =
         this.$route.path.slice(1) + // remove the leading '/'
         path;
       ipcRenderer.send("save-object", {
         key,
         bucket: this.$store.state.bucketName,
+        chunkSize: this.$store.state.multipartDownloadChunkSize,
+        multipartThreshold: this.$store.state.multipartDownloadThreshold,
+        size,
       });
     },
     bytesToSize(bytes) {
