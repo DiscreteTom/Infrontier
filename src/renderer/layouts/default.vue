@@ -51,6 +51,9 @@
 
       <v-spacer />
 
+      <!-- home button -->
+      <tt-btn bottom to="/" icon="mdi-home-outline" tt="Home" />
+
       <!-- add button -->
       <tt-btn
         bottom
