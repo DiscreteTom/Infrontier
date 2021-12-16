@@ -1,10 +1,12 @@
-# electron-nuxt
+# Infrontier
 
-> An electron-nuxt project
+> Powered by [electron-nuxt](https://github.com/michalzaq12/electron-nuxt).
 
-#### Build Setup
+A simple AWS S3 client written with Electron.
 
-``` bash
+## Build Setup
+
+```bash
 # install dependencies
 yarn install
 
@@ -13,9 +15,9 @@ yarn dev
 
 # build electron application for production
 yarn build
-
 ```
 
----
+## TODO
 
-This project was generated with [electron-nuxt](https://github.com/michalzaq12/electron-nuxt) v1.8.0 using [vue-cli](https://github.com/vuejs/vue-cli). Documentation about the original structure can be found [here](https://github.com/michalzaq12/electron-nuxt/blob/master/README.md).
+- [ ] File content preview & format.
+- [ ] Multipart upload/download.
