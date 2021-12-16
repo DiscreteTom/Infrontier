@@ -77,23 +77,25 @@ export default {
     };
   },
   methods: {
-    refresh() {
-      this.loading = true;
+    // if `folderPath` is not provided, refresh the current folder.
+    refresh(folderPath) {
+      if (!folderPath) folderPath = this.path;
+      if (folderPath == this.path) this.loading = true;
       this.$aws.s3
         .send(
           new ListObjectsV2Command({
             Bucket: this.$store.state.bucketName,
-            Prefix: this.path,
+            Prefix: folderPath,
             Delimiter: "/",
           })
         )
         .then((res) => {
-          this.loading = false;
+          if (folderPath == this.path) this.loading = false;
           let content = {};
           // sub folders
           if (res.CommonPrefixes) {
             res.CommonPrefixes.map((folder) => {
-              let folderName = folder.Prefix.slice(this.path.length);
+              let folderName = folder.Prefix.slice(folderPath.length);
               content[folderName] = {};
             });
           }
@@ -101,14 +103,14 @@ export default {
           // files
           if (res.Contents) {
             res.Contents.map((file) => {
-              let fileName = file.Key.slice(this.path.length);
+              let fileName = file.Key.slice(folderPath.length);
               content[fileName] = file;
             });
           }
 
           // apply changes
           this.dirents = content;
-          this.$store.commit("updateFolder", { path: this.path, content });
+          this.$store.commit("updateFolder", { path: folderPath, content });
         });
     },
     deleteObjectOrFolder(key) {
@@ -172,6 +174,11 @@ export default {
     } else {
       this.refresh();
     }
+  },
+  created() {
+    ipcRenderer.on("refresh-folder", (event, arg) => {
+      this.refresh(arg);
+    });
   },
 };
 </script>

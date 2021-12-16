@@ -92,6 +92,10 @@ ipcMain.on("upload-object", async (event, arg) => {
         title: "Uploaded",
         body: `Path: ${arg.key}`,
       }).show();
+      event.reply(
+        "refresh-folder",
+        arg.key.split("/").slice(0, -1).join("/") + "/"
+      );
     });
 });
 
@@ -133,5 +137,11 @@ ipcMain.on("delete-folder", async (event, arg) => {
   if (arg.prefix.split("/").length == 2) {
     // this is a top level folder
     event.reply("refresh-folder-list", "");
+  } else {
+    // refresh a normal folder
+    event.reply(
+      "refresh-folder",
+      arg.prefix.split("/").slice(0, -2).join("/") + "/"
+    );
   }
 });
