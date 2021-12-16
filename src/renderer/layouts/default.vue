@@ -102,6 +102,8 @@ export default {
           if (res.CommonPrefixes) {
             let folderNames = res.CommonPrefixes.map((e) => e.Prefix);
             this.$store.commit("updateFolderList", { folderNames });
+          } else {
+            this.$store.commit("updateFolderList", { folderNames: [] });
           }
           this.loading = false;
         });
