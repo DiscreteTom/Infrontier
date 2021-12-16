@@ -42,7 +42,10 @@ export default {
         region: this.region,
       });
       this.alert = true;
-      ipcRenderer.send("get-aws-credentials", this.$store.state.profile);
+      ipcRenderer.send("get-aws-credentials", {
+        profile: this.$store.state.profile,
+        region: this.$store.state.region,
+      });
     },
   },
   mounted() {

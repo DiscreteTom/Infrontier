@@ -121,7 +121,10 @@ export default {
     this.$bus.$on("refresh-folder-list", this.refreshFolderList);
 
     ipcRenderer.send("load-config");
-    ipcRenderer.send("get-aws-credentials", this.$store.state.profile);
+    ipcRenderer.send("get-aws-credentials", {
+      profile: this.$store.state.profile,
+      region: this.$store.state.region,
+    });
   },
 };
 </script>

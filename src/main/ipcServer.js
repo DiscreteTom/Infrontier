@@ -12,10 +12,16 @@ import path from "path";
 import mainWindow from "./mainWindow";
 
 const CONFIG_FILE = "config.json";
-const s3 = new S3Client();
+let aws = {};
 
 ipcMain.on("get-aws-credentials", (event, arg) => {
-  defaultProvider({ profile: arg || "default" })().then((res) => {
+  defaultProvider({ profile: arg.profile || "default" })().then((res) => {
+    aws["s3"] = new S3Client({
+      credentials: {
+        ...res,
+      },
+      region: arg.region,
+    });
     event.reply("get-aws-credentials", res);
   });
 });
@@ -60,8 +66,9 @@ ipcMain.on("save-object", async (event, arg) => {
     let targetFilePath = folderPath + path.sep + filename;
 
     new Notification({ title: "Downloading", body: `Filename: ${key}` }).show();
-    s3.send(new GetObjectCommand({ Bucket: arg.bucket, Key: arg.key })).then(
-      (res) => {
+    aws.s3
+      .send(new GetObjectCommand({ Bucket: arg.bucket, Key: arg.key }))
+      .then((res) => {
         let ws = fs.createWriteStream(targetFilePath);
         res.Body.pipe(ws);
         res.Body.on("end", () => {
@@ -70,8 +77,7 @@ ipcMain.on("save-object", async (event, arg) => {
             body: `Location: ${targetFilePath}`,
           }).show();
         });
-      }
-    );
+      });
   }
 });
 
@@ -81,14 +87,14 @@ ipcMain.on("upload-object", async (event, arg) => {
     title: "Uploading",
     body: `File: ${arg.localPath}`,
   }).show();
-  s3.send(
-    new PutObjectCommand({ Bucket: arg.bucket, Key: arg.key, Body: rs })
-  ).then((res) => {
-    new Notification({
-      title: "Uploaded",
-      body: `Path: ${arg.key}`,
-    }).show();
-  });
+  aws.s3
+    .send(new PutObjectCommand({ Bucket: arg.bucket, Key: arg.key, Body: rs }))
+    .then((res) => {
+      new Notification({
+        title: "Uploaded",
+        body: `Path: ${arg.key}`,
+      }).show();
+    });
 });
 
 ipcMain.on("delete-folder", async (event, arg) => {
@@ -98,7 +104,7 @@ ipcMain.on("delete-folder", async (event, arg) => {
   }).show();
   while (true) {
     // res will contain less than 1000 objects
-    let res = await s3.send(
+    let res = await aws.s3.send(
       new ListObjectsV2Command({
         Bucket: arg.bucket,
         Prefix: arg.prefix,
@@ -112,7 +118,7 @@ ipcMain.on("delete-folder", async (event, arg) => {
     res.Contents.map((obj) => {
       targets.push({ Key: obj.Key });
     });
-    await s3.send(
+    await aws.s3.send(
       new DeleteObjectsCommand({
         Bucket: arg.bucket,
         Delete: {
