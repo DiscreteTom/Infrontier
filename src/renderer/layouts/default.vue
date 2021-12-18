@@ -62,6 +62,11 @@
         tt="New Folder"
       />
 
+      <!-- add button -->
+      <v-badge :value="Object.keys($store.state.tasks).length != 0">
+        <tt-btn bottom to="/tasks" icon="mdi-clock-outline" tt="Tasks" />
+      </v-badge>
+
       <!-- settings button -->
       <tt-btn bottom to="/settings" icon="mdi-cog-outline" tt="Settings" />
     </v-app-bar>
