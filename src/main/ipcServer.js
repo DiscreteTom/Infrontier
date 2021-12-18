@@ -137,7 +137,7 @@ ipcMain.on("upload-object", async (event, arg) => {
   });
 
   let fileSize = fs.statSync(arg.localPath).size;
-  if (fileSize <= arg.multipartThreshold * 1024 * 1024) {
+  if (!arg.start && fileSize <= arg.multipartThreshold * 1024 * 1024) {
     // normal upload without multipart
     let rs = fs.createReadStream(arg.localPath);
     await aws.s3.send(
