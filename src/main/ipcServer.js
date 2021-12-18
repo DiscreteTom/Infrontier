@@ -65,12 +65,12 @@ ipcMain.on("save-object", async (event, arg) => {
     let filename = key.split("/").at(-1);
     let folderPath = result.filePaths[0];
     let targetFilePath = folderPath + path.sep + filename;
-    let ws = fs.createWriteStream(targetFilePath);
 
     new Notification({ title: "Downloading", body: `Filename: ${key}` }).show();
 
     if (arg.size < arg.multipartThreshold * 1024 * 1024) {
       // simple download without multipart
+      let ws = fs.createWriteStream(targetFilePath);
       let res = await aws.s3.send(
         new GetObjectCommand({ Bucket: arg.bucket, Key: arg.key })
       );
@@ -87,6 +87,7 @@ ipcMain.on("save-object", async (event, arg) => {
 
       let start = 0;
       while (true) {
+        let ws = fs.createWriteStream(targetFilePath, { start });
         let end = start + arg.chunkSize * 1024 * 1024;
         if (end >= arg.size) end = arg.size - 1;
 
@@ -99,8 +100,7 @@ ipcMain.on("save-object", async (event, arg) => {
             Range: `bytes=${start}-${end}`,
           })
         );
-        if (end != arg.size - 1) res.Body.pipe(ws, { end: false });
-        else res.Body.pipe(ws);
+        res.Body.pipe(ws);
         let waiter = new Promise(function (resolve, reject) {
           res.Body.on("end", () => {
             resolve();
