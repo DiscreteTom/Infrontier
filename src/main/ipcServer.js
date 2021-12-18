@@ -87,7 +87,7 @@ ipcMain.on("save-object", async (event, arg) => {
 
       let start = 0;
       while (true) {
-        let ws = fs.createWriteStream(targetFilePath, { start });
+        let ws = fs.createWriteStream(targetFilePath, { start, flags: "a+" });
         let end = start + arg.chunkSize * 1024 * 1024;
         if (end >= arg.size) end = arg.size - 1;
 
