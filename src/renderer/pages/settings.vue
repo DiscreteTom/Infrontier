@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div style="height: 100%; overflow: auto; padding-bottom: 10px">
     <v-alert type="success" v-model="alert" dismissible> Saved </v-alert>
     <v-text-field
       label="AWS Profile Name"
