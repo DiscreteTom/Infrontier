@@ -90,10 +90,12 @@ export default {
     },
     updateTask(state, { id, start, uploadId, partNumber, parts }) {
       state.tasks[id] = { start, uploadId, parts, partNumber };
+      state.tasks = { ...state.tasks }; // force refresh
       persistConfig(state);
     },
     finishTask(state, { id }) {
       delete state.tasks[id];
+      state.tasks = { ...state.tasks }; // force refresh
       persistConfig(state);
     },
   },

@@ -68,7 +68,7 @@
         to="/tasks"
         icon="mdi-clock-outline"
         tt="Tasks"
-        :badge="$store.state.taskNumber != 0"
+        :badge="Object.keys($store.state.tasks).length != 0"
       />
 
       <!-- settings button -->
