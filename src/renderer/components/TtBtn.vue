@@ -7,7 +7,9 @@
         @click.stop.prevent="$emit('click')"
         :to="to"
       >
-        <v-icon>{{ icon }}</v-icon>
+        <v-badge dot :value="badge">
+          <v-icon>{{ icon }}</v-icon>
+        </v-badge>
         {{ btnText }}
       </v-btn>
     </template>
@@ -26,6 +28,7 @@ export default {
     left: Boolean,
     right: Boolean,
     to: String,
+    badge: Boolean,
   },
 };
 </script>

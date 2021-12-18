@@ -63,9 +63,13 @@
       />
 
       <!-- add button -->
-      <v-badge :value="Object.keys($store.state.tasks).length != 0">
-        <tt-btn bottom to="/tasks" icon="mdi-clock-outline" tt="Tasks" />
-      </v-badge>
+      <tt-btn
+        bottom
+        to="/tasks"
+        icon="mdi-clock-outline"
+        tt="Tasks"
+        :badge="$store.state.taskNumber != 0"
+      />
 
       <!-- settings button -->
       <tt-btn bottom to="/settings" icon="mdi-cog-outline" tt="Settings" />
