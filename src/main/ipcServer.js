@@ -127,6 +127,14 @@ ipcMain.on("upload-object", async (event, arg) => {
     title: "Uploading",
     body: `File: ${arg.localPath}`,
   }).show();
+  let taskId = [
+    "upload",
+    encodeURIComponent(arg.key),
+    encodeURIComponent(arg.localPath),
+  ].join("@");
+  event.reply("update-task", {
+    id: taskId,
+  });
 
   let fileSize = fs.statSync(arg.localPath).size;
   if (fileSize <= arg.multipartThreshold * 1024 * 1024) {
@@ -145,16 +153,31 @@ ipcMain.on("upload-object", async (event, arg) => {
 
     console.log(`multipart upload, chunk size=${chunkSize}`);
 
-    let res = await aws.s3.send(
-      new CreateMultipartUploadCommand({ Bucket: arg.bucket, Key: arg.key })
-    );
+    let uploadId = arg.uploadId;
+    let start = arg.start || 0;
+    let partNumber = arg.partNumber || 0;
+    let parts = arg.parts || [];
+    if (!uploadId) {
+      // create new multipart upload
+      let res = await aws.s3.send(
+        new CreateMultipartUploadCommand({ Bucket: arg.bucket, Key: arg.key })
+      );
+      uploadId = res.UploadId;
+      event.reply("update-task", {
+        id: taskId,
+        start,
+        uploadId,
+        partNumber,
+        parts,
+      });
+      console.log(`multipart upload created, uploadId=${uploadId}`);
+    } else {
+      // resume multipart upload
+      console.log(
+        `multipart upload, resume uploadId=${uploadId}, start=${start}, partNumber=${partNumber}`
+      );
+    }
 
-    console.log("multipart upload created");
-
-    let uploadId = res.UploadId;
-    let start = 0;
-    let partNumber = 0;
-    let parts = [];
     while (true) {
       partNumber++;
       let end = start + chunkSize;
@@ -181,6 +204,13 @@ ipcMain.on("upload-object", async (event, arg) => {
         });
       if (end == fileSize - 1) break;
       start = end + 1;
+      event.reply("update-task", {
+        id: taskId,
+        start,
+        uploadId,
+        partNumber,
+        parts,
+      });
     }
     await aws.s3.send(
       new CompleteMultipartUploadCommand({
@@ -199,6 +229,7 @@ ipcMain.on("upload-object", async (event, arg) => {
     "refresh-folder",
     arg.key.split("/").slice(0, -1).join("/") + "/"
   );
+  event.reply("finish-task", { id: taskId });
 });
 
 ipcMain.on("delete-folder", async (event, arg) => {

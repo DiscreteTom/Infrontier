@@ -33,6 +33,19 @@ export default {
       multipartUploadChunkSize: 5,
       multipartDownloadThreshold: 100,
       multipartDownloadChunkSize: 5,
+      /**
+       * ```
+       * id(string) => {
+       *   start: int, // optional, omit when not multipart upload/download
+       *   uploadId: string, // optional, exist when multipart upload
+       *   partNumber: int, // optional, exist when multipart upload
+       *   parts: [], // optional, exist when multipart upload
+       * }
+       * ```
+       *
+       * `id = [('upload' or 'download'), urlEncode(s3key), urlEncode(localPath)].join('@')`
+       */
+      tasks: {},
     };
   },
   mutations: {
@@ -73,6 +86,14 @@ export default {
         parent = getFolder(state.folders, parentPath);
         parent[path.slice(parentPath.length)] = content;
       }
+      persistConfig(state);
+    },
+    updateTask(state, { id, start, uploadId, partNumber, parts }) {
+      state.tasks[id] = { start, uploadId, parts, partNumber };
+      persistConfig(state);
+    },
+    finishTask(state, { id }) {
+      delete state.tasks[id];
       persistConfig(state);
     },
   },

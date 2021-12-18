@@ -129,6 +129,12 @@ export default {
     ipcRenderer.on("refresh-folder-list", (event, arg) => {
       this.refreshFolderList();
     });
+    ipcRenderer.on("update-task", (event, arg) => {
+      this.$store.commit("updateTask", arg);
+    });
+    ipcRenderer.on("finish-task", (event, arg) => {
+      this.$store.commit("finishTask", arg);
+    });
     this.$bus.$on("refresh-folder-list", this.refreshFolderList);
 
     ipcRenderer.send("load-config");
