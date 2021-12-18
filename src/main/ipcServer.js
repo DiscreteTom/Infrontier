@@ -65,10 +65,18 @@ ipcMain.on("save-object", async (event, arg) => {
     let filename = key.split("/").at(-1);
     let folderPath = result.filePaths[0];
     let targetFilePath = folderPath + path.sep + filename;
+    let taskId = [
+      "download",
+      encodeURIComponent(arg.key),
+      encodeURIComponent(targetFilePath),
+    ].join("@");
+    event.reply("update-task", {
+      id: taskId,
+    });
 
     new Notification({ title: "Downloading", body: `Filename: ${key}` }).show();
 
-    if (arg.size < arg.multipartThreshold * 1024 * 1024) {
+    if (!arg.start && arg.size < arg.multipartThreshold * 1024 * 1024) {
       // simple download without multipart
       let ws = fs.createWriteStream(targetFilePath);
       let res = await aws.s3.send(
@@ -85,7 +93,7 @@ ipcMain.on("save-object", async (event, arg) => {
       // multipart download
       console.log(`multipart download, chunkSize=${arg.chunkSize}MB`);
 
-      let start = 0;
+      let start = arg.start || 0;
       while (true) {
         let ws = fs.createWriteStream(targetFilePath, { start, flags: "a+" });
         let end = start + arg.chunkSize * 1024 * 1024;
@@ -113,11 +121,16 @@ ipcMain.on("save-object", async (event, arg) => {
 
         if (end == arg.size - 1) break;
         start = end + 1;
+        event.reply("update-task", {
+          id: taskId,
+          start,
+        });
       }
       new Notification({
         title: "Downloaded",
         body: `Location: ${targetFilePath}`,
       }).show();
+      event.reply("finish-task", { id: taskId });
     }
   }
 });
