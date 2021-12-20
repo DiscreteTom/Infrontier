@@ -41,6 +41,7 @@ export default {
        *   uploadId: string, // optional, exist when multipart upload
        *   partNumber: int, // optional, exist when multipart upload
        *   parts: [], // optional, exist when multipart upload
+       *   running: false, // all tasks loaded from file are not running
        * }
        * ```
        *
@@ -50,13 +51,24 @@ export default {
     };
   },
   mutations: {
+    /**
+     * load config from file
+     */
     loadConfig(state, config) {
+      // load config
       for (let key in state) {
         if (config[key]) {
           state[key] = config[key];
         }
       }
+      // all tasks from file is not running
+      Object.keys(state.tasks).map((taskId) => {
+        state.tasks[taskId].running = false;
+      });
     },
+    /**
+     * update config & persist config to file
+     */
     updateConfig(state, config) {
       for (let key in state) {
         if (config[key]) {

@@ -72,6 +72,7 @@ ipcMain.on("save-object", async (event, arg) => {
     ].join("@");
     event.reply("update-task", {
       id: taskId,
+      running: true,
     });
 
     new Notification({ title: "Downloading", body: `Filename: ${key}` }).show();
@@ -125,6 +126,7 @@ ipcMain.on("save-object", async (event, arg) => {
           id: taskId,
           start,
           size: arg.size,
+          running: true,
         });
       }
       new Notification({
@@ -148,6 +150,7 @@ ipcMain.on("upload-object", async (event, arg) => {
   ].join("@");
   event.reply("update-task", {
     id: taskId,
+    running: true,
   });
 
   let fileSize = fs.statSync(arg.localPath).size;
@@ -184,6 +187,7 @@ ipcMain.on("upload-object", async (event, arg) => {
         partNumber,
         parts,
         size: fileSize,
+        running: true,
       });
       console.log(`multipart upload created, uploadId=${uploadId}`);
     } else {
@@ -226,6 +230,7 @@ ipcMain.on("upload-object", async (event, arg) => {
         partNumber,
         parts,
         size: fileSize,
+        running: true,
       });
     }
     await aws.s3.send(
