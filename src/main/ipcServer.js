@@ -124,6 +124,7 @@ ipcMain.on("save-object", async (event, arg) => {
         event.reply("update-task", {
           id: taskId,
           start,
+          size: arg.size,
         });
       }
       new Notification({
@@ -182,6 +183,7 @@ ipcMain.on("upload-object", async (event, arg) => {
         uploadId,
         partNumber,
         parts,
+        size: fileSize,
       });
       console.log(`multipart upload created, uploadId=${uploadId}`);
     } else {
@@ -223,6 +225,7 @@ ipcMain.on("upload-object", async (event, arg) => {
         uploadId,
         partNumber,
         parts,
+        size: fileSize,
       });
     }
     await aws.s3.send(

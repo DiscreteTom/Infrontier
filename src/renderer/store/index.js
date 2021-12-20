@@ -37,6 +37,7 @@ export default {
        * ```
        * id(string) => {
        *   start: int, // optional, omit when not multipart upload/download
+       *   size: int, // optional, omit when not multipart upload/download
        *   uploadId: string, // optional, exist when multipart upload
        *   partNumber: int, // optional, exist when multipart upload
        *   parts: [], // optional, exist when multipart upload
@@ -88,8 +89,9 @@ export default {
       }
       persistConfig(state);
     },
-    updateTask(state, { id, start, uploadId, partNumber, parts }) {
-      state.tasks[id] = { start, uploadId, parts, partNumber };
+    updateTask(state, param) {
+      let { id, ...rest } = param;
+      state.tasks[id] = rest;
       state.tasks = { ...state.tasks }; // force refresh
       persistConfig(state);
     },
