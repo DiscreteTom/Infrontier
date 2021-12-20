@@ -98,10 +98,32 @@ import TtBtn from "../components/TtBtn.vue";
 export default {
   components: { TtBtn },
   methods: {
-    cancelTask(key) {
-      // ipcRenderer.send('cancel-task')
+    cancelTask(id) {
+      ipcRenderer.send("cancel-task", {
+        id,
+        task: this.$store.state.tasks[id],
+      });
     },
-    resumeTask(key) {},
+    resumeTask(id) {
+      let command = id.split("@")[0];
+      let param = {
+        key: decodeURIComponent(id.split("@")[1]),
+        localPath: decodeURIComponent(id.split("@")[2]),
+        bucket: this.$store.state.bucketName,
+        chunkSize: this.$store.state.multipartDownloadChunkSize,
+        multipartThreshold: this.$store.state.multipartDownloadThreshold,
+        start: this.$store.state.tasks[id].start,
+        size: this.$store.state.tasks[id].size,
+        uploadId: this.$store.state.tasks[id].uploadId,
+        partNumber: this.$store.state.tasks[id].partNumber,
+        parts: this.$store.state.tasks[id].parts,
+      };
+      if (command == "download") {
+        ipcRenderer.send("save-object", param);
+      } else if (command == "upload") {
+        ipcRenderer.send("upload-object", param);
+      }
+    },
   },
 };
 </script>
