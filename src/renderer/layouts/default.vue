@@ -98,6 +98,9 @@ export default {
     };
   },
   methods: {
+    /**
+     * refresh top level folder
+     */
     refreshFolderList() {
       this.loading = true;
       this.$aws.s3
@@ -115,6 +118,41 @@ export default {
             this.$store.commit("updateFolderList", { folderNames: [] });
           }
           this.loading = false;
+        });
+    },
+    /**
+     * refresh sub folders
+     */
+    refreshFolder(path) {
+      this.$aws.s3
+        .send(
+          new ListObjectsV2Command({
+            Bucket: this.$store.state.bucketName,
+            Prefix: path,
+            Delimiter: "/",
+          })
+        )
+        .then((res) => {
+          let content = {};
+          // sub folders
+          if (res.CommonPrefixes) {
+            res.CommonPrefixes.map((folder) => {
+              let folderName = folder.Prefix.slice(path.length);
+              content[folderName] = {};
+            });
+          }
+
+          // files
+          if (res.Contents) {
+            res.Contents.map((file) => {
+              let fileName = file.Key.slice(path.length);
+              content[fileName] = file;
+            });
+          }
+
+          // apply changes
+          this.$store.commit("updateFolder", { path, content });
+          this.$bus.$emit("refresh-folder-view");
         });
     },
     encodedPath() {
@@ -144,7 +182,11 @@ export default {
     ipcRenderer.on("finish-task", (event, arg) => {
       this.$store.commit("finishTask", arg);
     });
+    ipcRenderer.on("refresh-folder", (event, arg) => {
+      this.refreshFolder(arg);
+    });
     this.$bus.$on("refresh-folder-list", this.refreshFolderList);
+    this.$bus.$on("refresh-folder", this.refreshFolder);
 
     ipcRenderer.send("load-config");
   },

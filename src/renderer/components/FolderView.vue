@@ -77,41 +77,15 @@ export default {
     };
   },
   methods: {
-    // if `folderPath` is not provided, refresh the current folder.
-    refresh(folderPath) {
-      if (!folderPath) folderPath = this.path;
-      if (folderPath == this.path) this.loading = true;
-      this.$aws.s3
-        .send(
-          new ListObjectsV2Command({
-            Bucket: this.$store.state.bucketName,
-            Prefix: folderPath,
-            Delimiter: "/",
-          })
-        )
-        .then((res) => {
-          if (folderPath == this.path) this.loading = false;
-          let content = {};
-          // sub folders
-          if (res.CommonPrefixes) {
-            res.CommonPrefixes.map((folder) => {
-              let folderName = folder.Prefix.slice(folderPath.length);
-              content[folderName] = {};
-            });
-          }
-
-          // files
-          if (res.Contents) {
-            res.Contents.map((file) => {
-              let fileName = file.Key.slice(folderPath.length);
-              content[fileName] = file;
-            });
-          }
-
-          // apply changes
-          this.dirents = content;
-          this.$store.commit("updateFolder", { path: folderPath, content });
-        });
+    // call aws
+    refresh() {
+      this.loading = true;
+      this.$bus.$emit("refresh-folder", this.path);
+    },
+    // retrieve dirents from vuex
+    refreshDirents() {
+      this.dirents = this.$store.getters.folder(this.path);
+      this.loading = false;
     },
     deleteObjectOrFolder(key) {
       if (!key.endsWith("/") && key.length != 0) {
@@ -172,17 +146,13 @@ export default {
   },
   mounted() {
     this.path = this.$route.path.slice(1); // remove the leading '/'
-    let current = this.$store.getters.folder(this.path);
-    if (current && Object.keys(current).length != 0) {
-      this.dirents = current;
-    } else {
+    this.refreshDirents();
+    if (!this.dirents || Object.keys(this.dirents).length == 0) {
       this.refresh();
     }
   },
   created() {
-    ipcRenderer.on("refresh-folder", (event, arg) => {
-      this.refresh(arg);
-    });
+    this.$bus.$on("refresh-folder-view", this.refreshDirents);
   },
 };
 </script>
