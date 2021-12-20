@@ -9,6 +9,8 @@ import {
   CreateMultipartUploadCommand,
   UploadPartCommand,
   CompleteMultipartUploadCommand,
+  AbortMultipartUploadCommand,
+  ListPartsCommand,
 } from "@aws-sdk/client-s3";
 import fs, { fstatSync } from "fs";
 import path from "path";
@@ -303,6 +305,46 @@ ipcMain.on("delete-folder", async (event, arg) => {
       arg.prefix.split("/").slice(0, -2).join("/") + "/"
     );
   }
+});
+
+ipcMain.on("cancel-task", async (event, arg) => {
+  let type = arg.id.split("@")[0];
+  let s3key = decodeURIComponent(arg.id.split("@")[1]);
+  let localPath = decodeURIComponent(arg.id.split("@")[2]);
+  new Notification({
+    title: "Canceling task",
+    body: type == "download" ? `Removing ${localPath}` : `Canceling ${s3key}`,
+  }).show();
+
+  if (type == "download") {
+    fs.unlink(localPath, () => {});
+  } else if (type == "upload") {
+    while (true) {
+      await aws.s3.send(
+        new AbortMultipartUploadCommand({
+          Bucket: arg.bucket,
+          Key: s3key,
+          UploadId: arg.task.uploadId,
+        })
+      );
+      try {
+        let res = await aws.s3.send(
+          new ListPartsCommand({
+            Bucket: arg.bucket,
+            UploadId: arg.task.uploadId,
+            Key: s3key,
+          })
+        );
+        if (!res.Parts || !res.Parts.length) {
+          break;
+        }
+      } catch {
+        break;
+      }
+    }
+  }
+
+  event.reply("finish-task", { id: arg.id });
 });
 
 const streamToBuffer = (stream) =>
