@@ -8,9 +8,11 @@
           <v-list-item-icon style="align-self: center">
             <v-icon
               :color="
-                key.split('@')[0] == 'upload'
-                  ? 'orange darken-4'
-                  : 'blue darken-4'
+                value.running
+                  ? key.split('@')[0] == 'upload'
+                    ? 'orange darken-4'
+                    : 'blue darken-4'
+                  : 'dark'
               "
             >
               {{
@@ -45,13 +47,14 @@
               <template v-slot:activator="{ on }">
                 <v-btn icon v-on="on">
                   <v-progress-circular
-                    :indeterminate="value.start == undefined"
+                    :indeterminate="value.start == undefined && value.running"
                     :value="
                       value.start == undefined
                         ? undefined
                         : (value.start / value.size) * 100
                     "
                     :size="20"
+                    :rotate="-90"
                   />
                 </v-btn>
               </template>
