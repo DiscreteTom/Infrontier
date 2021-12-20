@@ -1,5 +1,11 @@
 <template>
   <div style="height: 100%; overflow: auto; padding-bottom: 10px">
+    <v-alert
+      type="warning"
+      :value="Object.keys($store.state.tasks).length != 0"
+    >
+      Please wait for all tasks to be done before change settings.
+    </v-alert>
     <v-alert type="success" v-model="alert" dismissible> Saved </v-alert>
     <v-text-field
       label="AWS Profile Name"
@@ -81,6 +87,7 @@ export default {
         multipartUploadChunkSize: this.multipartUploadChunkSize,
         multipartDownloadThreshold: this.multipartDownloadThreshold,
         multipartDownloadChunkSize: this.multipartDownloadChunkSize,
+        tasks: {},
       });
       this.alert = true;
       ipcRenderer.send("get-aws-credentials", {
