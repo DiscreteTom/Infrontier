@@ -68,12 +68,19 @@
             <tt-btn
               top
               icon="mdi-restart"
-              tt="Continue"
-              @click="cancelTask(key)"
+              :disabled="value.running"
+              :tt="value.running ? 'Task is already running' : 'Continue'"
+              @click="resumeTask(key)"
             />
           </v-list-item-action>
           <v-list-item-action class="my-0 mx-1">
-            <tt-btn top icon="mdi-close" tt="Cancel" @click="cancelTask(key)" />
+            <tt-btn
+              top
+              icon="mdi-close"
+              :disabled="value.running"
+              :tt="value.running ? 'Running task can\'t be canceled' : 'Cancel'"
+              @click="cancelTask(key)"
+            />
           </v-list-item-action>
         </v-list-item>
       </template>
@@ -94,6 +101,7 @@ export default {
     cancelTask(key) {
       // ipcRenderer.send('cancel-task')
     },
+    resumeTask(key) {},
   },
 };
 </script>
