@@ -5,6 +5,7 @@
 - Resumable multipart upload/download.
 - View tasks.
 - Cancel tasks.
+- Share objects by URL.
 
 ## v0.0.1
 
