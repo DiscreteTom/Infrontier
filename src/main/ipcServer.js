@@ -72,6 +72,7 @@ ipcMain.on("save-object", async (event, arg) => {
     }
   }
   if (targetFilePath) {
+    let key = arg.key;
     let taskId = [
       "download",
       encodeURIComponent(arg.key),
