@@ -82,8 +82,10 @@
             <v-radio label="Day(s)" :value="3600 * 24"></v-radio>
           </v-radio-group>
           <v-alert v-if="shareErr" type="error"> {{ shareErr }} </v-alert>
-          <v-btn @click="generateShareLink"> Generate Link </v-btn>
-          <v-btn @click="showShareDialog = false"> Cancel </v-btn>
+          <v-btn @click="generateShareLink" color="primary">
+            Generate Link
+          </v-btn>
+          <v-btn @click="showShareDialog = false" class="mx-3"> Cancel </v-btn>
         </v-card-text>
 
         <v-card-text v-if="signedUrl">

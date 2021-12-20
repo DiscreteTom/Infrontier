@@ -43,7 +43,7 @@
       placeholder="5"
     ></v-text-field>
 
-    <v-btn @click="save">Save</v-btn>
+    <v-btn @click="save" color="primary">Save</v-btn>
     <v-btn @click="resetForm">Reset</v-btn>
   </div>
 </template>

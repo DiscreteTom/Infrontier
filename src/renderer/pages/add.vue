@@ -5,7 +5,12 @@
     </v-alert>
     <h2>Create a new folder:</h2>
     <v-text-field label="Folder Path" v-model="key"></v-text-field>
-    <v-btn @click="submit" :disabled="btnDisabled" :loading="btnLoading">
+    <v-btn
+      @click="submit"
+      :disabled="btnDisabled"
+      :loading="btnLoading"
+      color="primary"
+    >
       Submit
     </v-btn>
   </div>
