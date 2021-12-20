@@ -6,6 +6,7 @@
         v-on="on"
         @click.stop.prevent="$emit('click')"
         :to="to"
+        :disabled="disabled"
       >
         <v-badge dot :value="badge">
           <v-icon>{{ icon }}</v-icon>
@@ -29,6 +30,7 @@ export default {
     right: Boolean,
     to: String,
     badge: Boolean,
+    disabled: Boolean,
   },
 };
 </script>
