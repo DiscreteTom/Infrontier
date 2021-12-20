@@ -41,9 +41,28 @@
           </v-list-item-content>
 
           <v-list-item-action class="my-0 mx-1">
-            <v-btn icon>
-              <v-progress-circular indeterminate :size="20" />
-            </v-btn>
+            <v-tooltip top>
+              <template v-slot:activator="{ on }">
+                <v-btn icon v-on="on">
+                  <v-progress-circular
+                    :indeterminate="value.start == undefined"
+                    :value="
+                      value.start == undefined
+                        ? undefined
+                        : (value.start / value.size) * 100
+                    "
+                    :size="20"
+                  />
+                </v-btn>
+              </template>
+              <span>
+                {{
+                  value.start == undefined
+                    ? "Only multipart tasks can calculate progress"
+                    : (value.start / value.size) * 100 + "%"
+                }}
+              </span>
+            </v-tooltip>
           </v-list-item-action>
           <v-list-item-action class="my-0 mx-1">
             <tt-btn
