@@ -57,14 +57,19 @@ ipcMain.on("update-config", (event, arg) => {
 });
 
 ipcMain.on("save-object", async (event, arg) => {
-  const result = await dialog.showOpenDialog(mainWindow.browserWindow, {
-    properties: ["openDirectory"],
-  });
-  if (!result.canceled) {
-    let key = arg.key;
-    let filename = key.split("/").at(-1);
-    let folderPath = result.filePaths[0];
-    let targetFilePath = folderPath + path.sep + filename;
+  let targetFilePath = arg.localPath;
+  if (!targetFilePath) {
+    const result = await dialog.showOpenDialog(mainWindow.browserWindow, {
+      properties: ["openDirectory"],
+    });
+    if (!result.canceled) {
+      let key = arg.key;
+      let filename = key.split("/").at(-1);
+      let folderPath = result.filePaths[0];
+      targetFilePath = folderPath + path.sep + filename;
+    }
+  }
+  if (targetFilePath) {
     let taskId = [
       "download",
       encodeURIComponent(arg.key),
