@@ -14,10 +14,11 @@ A simple AWS S3 client written with Electron. Designed for personal use.
   - Other text format.
 - **Resumable** multipart upload/download.
   - Even if you close this application by accident, you can resume multipart upload/download next time.
-- View pending tasks & cancel task.
+- View pending tasks & cancel tasks.
   - You can only cancel tasks that are not running.
   - You can stop tasks by close this application.
 - Drag file to upload.
+- Share objects by URL.
 
 ## Setup
 
