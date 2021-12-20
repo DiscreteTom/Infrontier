@@ -4,7 +4,7 @@
 
 A simple AWS S3 client written with Electron. Designed for personal use.
 
-![preview](img/1.png)
+![preview](img/index.png)
 
 ## Features
 
