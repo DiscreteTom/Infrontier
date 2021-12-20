@@ -102,6 +102,7 @@ export default {
       ipcRenderer.send("cancel-task", {
         id,
         task: this.$store.state.tasks[id],
+        bucket: this.$store.state.bucketName,
       });
     },
     resumeTask(id) {
