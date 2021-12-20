@@ -55,15 +55,50 @@
       <dirent-list
         :dirents="dirents"
         @delete-object-or-folder="deleteObjectOrFolder"
+        @share-object="shareBtnClicked($event)"
       ></dirent-list>
     </div>
+
+    <v-dialog
+      v-model="showShareDialog"
+      transition="dialog-bottom-transition"
+      max-width="600px"
+    >
+      <v-card>
+        <v-card-title> How long would you like to share? </v-card-title>
+        <v-card-subtitle> Sharing: {{ objectToBeShare }} </v-card-subtitle>
+        <v-card-text>
+          <v-text-field
+            v-model="shareExpireNumber"
+            type="number"
+            :rules="[
+              () =>
+                shareExpireNumber * shareExpireFactor <= 604800 ||
+                'Maximum period is 1 week',
+            ]"
+          />
+          <v-radio-group v-model="shareExpireFactor" row>
+            <v-radio label="Hour(s)" :value="3600"></v-radio>
+            <v-radio label="Day(s)" :value="3600 * 24"></v-radio>
+          </v-radio-group>
+          <v-alert v-if="shareErr" type="error"> {{ shareErr }} </v-alert>
+          <v-btn @click="generateShareLink"> Generate Link </v-btn>
+          <v-btn @click="showShareDialog = false"> Cancel </v-btn>
+        </v-card-text>
+
+        <v-card-text v-if="signedUrl">
+          <v-text-field v-model="signedUrl" readonly outlined />
+        </v-card-text>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
 <script>
 import DirentList from "./DirentList.vue";
 import TtBtn from "./TtBtn.vue";
-import { ListObjectsV2Command, DeleteObjectCommand } from "@aws-sdk/client-s3";
+import { GetObjectCommand, DeleteObjectCommand } from "@aws-sdk/client-s3";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { ipcRenderer } from "electron";
 
 export default {
@@ -74,6 +109,12 @@ export default {
       loading: false,
       dirents: {},
       dragEnterCount: 0,
+      objectToBeShare: "",
+      showShareDialog: false,
+      shareExpireNumber: 1,
+      shareExpireFactor: 3600,
+      signedUrl: "",
+      shareErr: "",
     };
   },
   methods: {
@@ -142,6 +183,26 @@ export default {
         chunkSize: this.$store.state.multipartUploadChunkSize,
         multipartThreshold: this.$store.state.multipartUploadThreshold,
       });
+    },
+    shareBtnClicked(key) {
+      this.objectToBeShare = this.path + key;
+      this.signedUrl = "";
+      this.shareErr = "";
+      this.showShareDialog = true;
+    },
+    generateShareLink() {
+      this.signedUrl = "";
+      this.shareErr = "";
+      getSignedUrl(
+        this.$aws.s3,
+        new GetObjectCommand({
+          Bucket: this.$store.state.bucketName,
+          Key: this.objectToBeShare,
+        }),
+        { expiresIn: this.shareExpireNumber * this.shareExpireFactor }
+      )
+        .then((url) => (this.signedUrl = url))
+        .catch((err) => (this.shareErr = err));
     },
   },
   mounted() {

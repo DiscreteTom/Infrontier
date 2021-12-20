@@ -46,6 +46,14 @@
           <v-list-item-action v-if="!path.endsWith('/')" class="my-0 mx-1">
             <tt-btn
               top
+              icon="mdi-share-variant"
+              tt="Share a link"
+              @click="$emit('share-object', path)"
+            />
+          </v-list-item-action>
+          <v-list-item-action v-if="!path.endsWith('/')" class="my-0 mx-1">
+            <tt-btn
+              top
               icon="mdi-cloud-download-outline"
               tt="Download"
               @click="saveObject(path, content.Size)"
