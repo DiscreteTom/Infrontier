@@ -1,7 +1,7 @@
 {
   "name": "infrontier",
   "version": "0.0.1",
-  "description": "An electron-nuxt project",
+  "description": "A simple AWS S3 client written with Electron.",
   "main": "./dist/main/index.js",
   "scripts": {
     "dev": "node .electron-nuxt/dev.js",
@@ -12,7 +12,7 @@
   "keywords": [],
   "author": "DiscreteTom <discrete_tom@outlook.com>",
   "license": "MIT",
-  "homepage": "https://github.com/michalzaq12/electron-nuxt/blob/master/README.md",
+  "homepage": "https://github.com/DiscreteTom/Infrontier",
   "engines": {
     "node": ">=12.13.0"
   },
