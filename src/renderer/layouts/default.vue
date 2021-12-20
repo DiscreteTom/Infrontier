@@ -188,7 +188,7 @@ export default {
     this.$bus.$on("refresh-folder-list", this.refreshFolderList);
     this.$bus.$on("refresh-folder", this.refreshFolder);
 
-    ipcRenderer.send("load-config");
+    ipcRenderer.send("load-config", this.$store.getters.defaultState);
   },
 };
 </script>

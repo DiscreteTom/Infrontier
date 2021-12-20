@@ -18,37 +18,39 @@ function getFolder(root, path) {
   return current;
 }
 
+const defaultConfig = {
+  bucketName: "",
+  region: "us-east-1",
+  profile: "default",
+  /**
+   * folderName => dirent (folder or file)
+   */
+  folders: {},
+  defaultEncrypt: "",
+  multipartUploadThreshold: 100,
+  multipartUploadChunkSize: 5,
+  multipartDownloadThreshold: 100,
+  multipartDownloadChunkSize: 5,
+  /**
+   * ```
+   * id(string) => {
+   *   start: int, // optional, omit when not multipart upload/download
+   *   size: int, // optional, omit when not multipart upload/download
+   *   uploadId: string, // optional, exist when multipart upload
+   *   partNumber: int, // optional, exist when multipart upload
+   *   parts: [], // optional, exist when multipart upload
+   *   running: false, // all tasks loaded from file are not running
+   * }
+   * ```
+   *
+   * `id = [('upload' or 'download'), urlEncode(s3key), urlEncode(localPath)].join('@')`
+   */
+  tasks: {},
+};
+
 export default {
   state() {
-    return {
-      bucketName: "",
-      region: "us-east-1",
-      profile: "default",
-      /**
-       * folderName => dirent (folder or file)
-       */
-      folders: {},
-      defaultEncrypt: "",
-      multipartUploadThreshold: 100,
-      multipartUploadChunkSize: 5,
-      multipartDownloadThreshold: 100,
-      multipartDownloadChunkSize: 5,
-      /**
-       * ```
-       * id(string) => {
-       *   start: int, // optional, omit when not multipart upload/download
-       *   size: int, // optional, omit when not multipart upload/download
-       *   uploadId: string, // optional, exist when multipart upload
-       *   partNumber: int, // optional, exist when multipart upload
-       *   parts: [], // optional, exist when multipart upload
-       *   running: false, // all tasks loaded from file are not running
-       * }
-       * ```
-       *
-       * `id = [('upload' or 'download'), urlEncode(s3key), urlEncode(localPath)].join('@')`
-       */
-      tasks: {},
-    };
+    return { ...defaultConfig };
   },
   mutations: {
     /**
@@ -112,6 +114,12 @@ export default {
       state.tasks = { ...state.tasks }; // force refresh
       persistConfig(state);
     },
+    reset(state) {
+      for (let key in state) {
+        state[key] = defaultConfig[key];
+      }
+      persistConfig(state);
+    },
   },
   getters: {
     /**
@@ -119,6 +127,9 @@ export default {
      */
     folder: (state) => (path) => {
       return getFolder(state.folders, path);
+    },
+    defaultState() {
+      return defaultConfig;
     },
   },
 };

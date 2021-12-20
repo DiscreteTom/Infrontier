@@ -33,12 +33,7 @@ ipcMain.on("load-config", (event, arg) => {
   fs.readFile(CONFIG_FILE, { encoding: "utf-8" }, (err, data) => {
     if (err) {
       // if no config file
-      let defaultConfig = {
-        bucketName: "",
-        profile: "default",
-        folders: [],
-        defaultEncrypt: "",
-      };
+      let defaultConfig = arg;
       // generate default config file
       fs.writeFile(
         CONFIG_FILE,
