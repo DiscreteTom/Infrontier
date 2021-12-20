@@ -59,7 +59,7 @@
                 {{
                   value.start == undefined
                     ? "Only multipart tasks can calculate progress"
-                    : (value.start / value.size) * 100 + "%"
+                    : ((value.start / value.size) * 100).toFixed(2) + "%"
                 }}
               </span>
             </v-tooltip>
