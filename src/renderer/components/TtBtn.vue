@@ -1,7 +1,7 @@
 <template>
   <v-tooltip :top="top" :bottom="bottom" :left="left" :right="right">
     <template v-slot:activator="{ on }">
-      <div v-on="on">
+      <span v-on="on">
         <v-btn
           :icon="icon.length != 0"
           @click.stop.prevent="$emit('click')"
@@ -13,7 +13,7 @@
           </v-badge>
           {{ btnText }}
         </v-btn>
-      </div>
+      </span>
     </template>
     <span>{{ tt }}</span>
   </v-tooltip>
