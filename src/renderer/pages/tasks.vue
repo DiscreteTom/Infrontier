@@ -95,14 +95,13 @@
 </template>
 
 <script>
-import { ipcRenderer } from "electron";
 import TtBtn from "../components/TtBtn.vue";
 
 export default {
   components: { TtBtn },
   methods: {
     cancelTask(id) {
-      ipcRenderer.send("cancel-task", {
+      this.$ipc.send("cancel-task", {
         id,
         task: this.$store.state.tasks[id],
         bucket: this.$store.state.bucketName,
@@ -123,9 +122,9 @@ export default {
         parts: this.$store.state.tasks[id].parts,
       };
       if (command == "download") {
-        ipcRenderer.send("save-object", param);
+        this.$ipc.send("save-object", param);
       } else if (command == "upload") {
-        ipcRenderer.send("upload-object", param);
+        this.$ipc.send("upload-object", param);
       }
     },
   },

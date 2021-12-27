@@ -86,7 +86,6 @@
 
 <script>
 import TtBtn from "../components/TtBtn.vue";
-import { ipcRenderer } from "electron";
 import { ListObjectsV2Command } from "@aws-sdk/client-s3";
 
 export default {
@@ -160,35 +159,35 @@ export default {
     },
   },
   created() {
-    ipcRenderer.on("load-config", (event, arg) => {
+    this.$ipc.one("load-config", (event, arg) => {
       this.$store.commit("loadConfig", arg);
       if (this.$store.state.bucketName) {
-        ipcRenderer.send("get-aws-credentials", {
+        this.$ipc.send("get-aws-credentials", {
           profile: this.$store.state.profile,
           region: this.$store.state.region,
         });
       }
     });
-    ipcRenderer.on("get-aws-credentials", (event, arg) => {
+    this.$ipc.one("get-aws-credentials", (event, arg) => {
       this.$aws.configure({ ...arg, region: this.$store.state.region });
       this.refreshFolderList();
     });
-    ipcRenderer.on("refresh-folder-list", (event, arg) => {
+    this.$ipc.one("refresh-folder-list", (event, arg) => {
       this.refreshFolderList();
     });
-    ipcRenderer.on("update-task", (event, arg) => {
+    this.$ipc.one("update-task", (event, arg) => {
       this.$store.commit("updateTask", arg);
     });
-    ipcRenderer.on("finish-task", (event, arg) => {
+    this.$ipc.one("finish-task", (event, arg) => {
       this.$store.commit("finishTask", arg);
     });
-    ipcRenderer.on("refresh-folder", (event, arg) => {
+    this.$ipc.one("refresh-folder", (event, arg) => {
       this.refreshFolder(arg);
     });
     this.$bus.$on("refresh-folder-list", this.refreshFolderList);
     this.$bus.$on("refresh-folder", this.refreshFolder);
 
-    ipcRenderer.send("load-config", this.$store.getters.defaultState);
+    this.$ipc.send("load-config", this.$store.getters.defaultState);
   },
 };
 </script>

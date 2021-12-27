@@ -80,7 +80,6 @@
 
 <script>
 import TtBtn from "./TtBtn.vue";
-import { ipcRenderer } from "electron";
 
 export default {
   components: { TtBtn },
@@ -92,7 +91,7 @@ export default {
       let key =
         this.$route.path.slice(1) + // remove the leading '/'
         path;
-      ipcRenderer.send("save-object", {
+      this.$ipc.send("save-object", {
         key,
         bucket: this.$store.state.bucketName,
         chunkSize: this.$store.state.multipartDownloadChunkSize,

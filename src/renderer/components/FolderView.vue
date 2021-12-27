@@ -101,7 +101,6 @@ import DirentList from "./DirentList.vue";
 import TtBtn from "./TtBtn.vue";
 import { GetObjectCommand, DeleteObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
-import { ipcRenderer } from "electron";
 
 export default {
   components: { DirentList, TtBtn },
@@ -148,7 +147,7 @@ export default {
           });
       } else {
         // delete a folder, use main process
-        ipcRenderer.send("delete-folder", {
+        this.$ipc.send("delete-folder", {
           bucket: this.$store.state.bucketName,
           prefix: this.path + key,
         });
@@ -166,7 +165,7 @@ export default {
     },
     onDrop(event) {
       this.dragEnterCount = 0;
-      ipcRenderer.send("upload-object", {
+      this.$ipc.send("upload-object", {
         bucket: this.$store.state.bucketName,
         localPath: event.dataTransfer.files[0].path,
         key: this.path + event.dataTransfer.files[0].name,
@@ -178,7 +177,7 @@ export default {
       this.$refs.fileInput.click();
     },
     fileChosen(event) {
-      ipcRenderer.send("upload-object", {
+      this.$ipc.send("upload-object", {
         bucket: this.$store.state.bucketName,
         localPath: event.target.files[0].path,
         key: this.path + event.target.files[0].name,
