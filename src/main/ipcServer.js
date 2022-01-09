@@ -136,8 +136,8 @@ ipcMain.on("save-object", async (event, arg) => {
         title: "Downloaded",
         body: `Location: ${targetFilePath}`,
       }).show();
-      event.reply("finish-task", { id: taskId });
     }
+    event.reply("finish-task", { id: taskId });
   }
 });
 
