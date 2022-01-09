@@ -7,7 +7,7 @@ let ipc = {
    * every channel can only has one listener
    */
   one(channel, f) {
-    if (Object.keys(channelMap).indexOf(channel) == -1) {
+    if (!Object.keys(channelMap).includes(channel)) {
       ipcRenderer.on(channel, (event, arg) => {
         channelMap[channel](event, arg);
       });

@@ -9,10 +9,7 @@
       ></v-progress-circular>
     </div>
     <div v-else>
-      <img
-        v-if="['jpg', 'jpeg', 'png'].indexOf(fileType) != -1"
-        :src="imgSrc"
-      />
+      <img v-if="['jpg', 'jpeg', 'png'].includes(fileType)" :src="imgSrc" />
       <v-simple-table v-else-if="fileType == 'csv'">
         <template v-slot:default>
           <tbody>
@@ -53,7 +50,7 @@ export default {
   methods: {
     parseImg() {
       let type = "";
-      if (["jpg", "jpeg"].indexOf(this.fileType) != -1) type = "jpeg";
+      if (["jpg", "jpeg"].includes(this.fileType)) type = "jpeg";
       else if (this.fileType == "png") type = "png";
       else {
         this.imgSrc = "";
