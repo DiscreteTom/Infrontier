@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## v0.1.1
+
+- Github Actions.
+
 ## v0.1.0
 
 - Resumable multipart upload/download.
