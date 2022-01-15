@@ -1,6 +1,6 @@
 {
   "name": "infrontier",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "A simple AWS S3 client written with Electron.",
   "main": "./dist/main/index.js",
   "scripts": {

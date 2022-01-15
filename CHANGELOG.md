@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## v0.1.2
+
+- Use unique `appId`.
+- Optimize build artifact name.
+
 ## v0.1.1
 
 - Github Actions.
