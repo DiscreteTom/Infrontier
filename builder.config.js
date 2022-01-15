@@ -3,7 +3,7 @@ const ICONS_DIR = "build/icons/";
 const windowsOS = {
   win: {
     icon: ICONS_DIR + "win-icon.ico",
-    publisherName: "michal",
+    publisherName: "DiscreteTom",
     target: "nsis",
   },
 
@@ -43,8 +43,8 @@ const macOS = {
 
 module.exports = {
   productName: "Infrontier",
-  appId: "com.example.app",
-  artifactName: "setup-${version}.${ext}",
+  appId: "com.example.infrontier",
+  artifactName: "Infrontier-${version}.${ext}",
   directories: {
     output: "build",
   },
